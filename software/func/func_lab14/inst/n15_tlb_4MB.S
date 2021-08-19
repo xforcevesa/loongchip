@@ -1,0 +1,49 @@
+#include "asm.h"
+#include "regdef.h"
+#include "inst_test.h"
+
+LEAF(n15_tlb_4MB)
+    addi.w s0, s0 ,0x1
+	li     s2, 0x0
+
+    invtlb 0x0, zero, zero
+
+    li    t0, 0x16000000            #index with 4MB PS
+    li    t2, 8<<23
+    li    t3, 1<<23
+    add.w t1, t2, t3                #VPN
+
+    li    t2, 0x000000aa
+    csrwr t2, csr_asid
+
+###TLB item 1
+    FILL_TLB_4MB(0x00003400, 0x00007000)
+###TLB item 2
+    FILL_TLB_4MB(0x00003500, 0x00007100)
+###TLB item 3
+    FILL_TLB_4MB(0x00003600, 0x00007200)
+###TLB item 4 G=1
+    FILL_TLB_4MB(0x00003640, 0x00007240)
+
+###tlb hit: G=0
+    TEST_TLBP_4MB(0x000000aa, 0x1, 0x16000000)
+    TEST_TLBP_4MB(0x000000aa, 0x2, 0x16000001)
+    TEST_TLBP_4MB(0x000000aa, 0x3, 0x16000002)
+###tlb hit: G=1
+    TEST_TLBP_4MB(0x000000bb, 0x4, 0x16000003)
+###tlb miss: no matching asid
+    TEST_TLBP_NOMATCHING_4MB(0x000003f0, 0x2)
+###tlb miss: no matching VPN
+    TEST_TLBP_NOMATCHING_4MB(0x000000aa, 0x7f)
+
+###detect exception
+    bne s2, zero, inst_error
+###score ++
+    addi.w s3, s3, 1
+###output (s0<<24)|s3
+inst_error:  
+    slli.w t3, s0, 24
+    or t0, t3, s3 
+    st.w t0, s1, 0x0
+    jirl zero, ra, 0x0
+END(n15_tlb_4MB)

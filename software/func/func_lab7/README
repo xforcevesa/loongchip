@@ -1,0 +1,11 @@
+//inst
+blt
+bge
+bltu
+bgeu
+ld.b
+ld.h
+ld.bu
+ld.hu
+st.b
+st.h

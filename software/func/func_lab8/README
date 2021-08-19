@@ -1,0 +1,13 @@
+//inst
+syscall
+csrrd
+csrwr
+csrxchg
+ertn
+
+//csr
+CRMD
+PRMD
+ESTAT
+ERA
+EENTRY
