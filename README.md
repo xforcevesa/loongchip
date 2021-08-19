@@ -5,10 +5,12 @@ chiplab项目致力于构建基于loongarch primary的soc敏捷开发平台。�
 .   
 ├── chip  
 │　　└── soc_demo   
-│　　　　　├── fpga   
+│　　　　　├── loongson   
+│　　　　　├── Baixin   
 │　　　　　└── sim   
 ├── fpga   
 │　　└── loongson   
+│　　└── Baixin   
 ├── IP   
 │　　├── AMBA    
 │　　├── APB_DEV    
@@ -17,8 +19,11 @@ chiplab项目致力于构建基于loongarch primary的soc敏捷开发平台。�
 │　　├── AXI_DELAY_RAND    
 │　　├── AXI_SRAM_BRIDGE    
 │　　├── BRIDGE    
+│　　├── DMA    
+│　　├── SPI    
+│　　├── MAC    
 │　　├── CONFREG   
-│　　├── myCPU   
+│　　├── qiwu  
 │　　└── xilinx_ip   
 ├── scripts   
 ├── sims   
@@ -39,6 +44,7 @@ chiplab项目致力于构建基于loongarch primary的soc敏捷开发平台。�
 　　　├── loongarch32_gnu   
 　　　├── qemu   
 　　　└── system_newlib
+
 ## 使用方法
 ### toolchains目录构建
 仓库中不包括`toolchains`目录，需要用户获取到二进制后自己构建。对各个目录进行介绍。
@@ -160,7 +166,7 @@ module core_top(
 仿真的工作目录位于`sims/verilator/run_*`，当前仅支持`verilator`。
 - `run_func` : 该工作目录下可运行`func`测试用例、`dhrystone`、`coremark`性能测试程序、`linux`以及自定义C程序。
 - `run_random` : 该工作目录下可进行随机指令序列测试。 
- 
+
 具体使用方法请参考`verilator`目录下的`README`。
      
 #### 综合、下板
@@ -193,7 +199,7 @@ make tgt=rom
 ```
 当前内核及`pmon`仅适配`qiwu`处理器核。 
 
----   
+---
 
 ### 常见问题
 #### qemu无法运行
