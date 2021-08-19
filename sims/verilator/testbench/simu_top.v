@@ -1,49 +1,49 @@
-// `ifdef RAND_TEST
-//     `define RAND_TEST_BUS_WD 32*CPU_WIDTH + 5*32 + 2*CPU_WIDTH
+ `ifdef RAND_TEST
+     `define RAND_TEST_BUS_WD 32*CPU_WIDTH + 5*32 + 2*CPU_WIDTH
 
-//     //Below is a sample for 2 commit
+     //Below is a sample for 2 commit
 
-//     `define CORE0           simu_top.soc.cpu
-//     `define FIX             `CORE0.cpu.cpu
-//     `define EXBUS           `CORE0.wb_stage
-//     `define EXBUS_EX        `EXBUS.excp_flush
-//     `define EXBUS_ERET      `EXBUS.eret_flush     // (1bit) Please notify rand_tester when ERET is excuted
-//     `define EXBUS_EXCODE    `EXBUS.csr_ecode
-//     `define EXBUS_EPC       `EXBUS.csr_epc
-//     `define GR_RTL          `CORE0.id_stage.u_regfile.rf
-//     `define CSR             `CORE0.u_csr
-//     `define CR_BADVADDR     `CSR.csr_badv
-//     `define ROQ             `CORE0.wb_stage
-//     `define CMTBUS_VALID0   `ROQ.real_valid 
-//     `define CMTBUS_CMTNUM0  {3'b0, !(`EXBUS.ws_excp || `EXBUS.eret_flush)&&`CMTBUS_VALID0}              // (2bit) the number (range from 0 to 3) which ref result counter would increase by, for ordinary instruction (neither splitted nor merged), this value is 1
-//     `ifdef CPU_2CMT
-//     `define CMTBUS_VALID1   `ROQ.port1_submit
-//     `define CMTBUS_CMTNUM1  {2'b0,`ROQ.port1_submit_num}
-//     `endif
+     `define CORE0           simu_top.soc.cpu
+     `define FIX             `CORE0.cpu.cpu
+     `define EXBUS           `CORE0.wb_stage
+     `define EXBUS_EX        `EXBUS.excp_flush
+     `define EXBUS_ERET      `EXBUS.ertn_flush     // (1bit) Please notify rand_tester when ERET is excuted
+     `define EXBUS_EXCODE    `EXBUS.csr_ecode
+     `define EXBUS_EPC       `EXBUS.csr_era
+     `define GR_RTL          `CORE0.id_stage.u_regfile.rf
+     `define CSR             `CORE0.u_csr
+     `define CR_BADVADDR     `CSR.csr_badv
+     `define ROQ             `CORE0.wb_stage
+     `define CMTBUS_VALID0   `ROQ.real_valid 
+     `define CMTBUS_CMTNUM0  {3'b0, !(`EXBUS.ws_excp || `EXBUS.ertn_flush)&&`CMTBUS_VALID0}              // (2bit) the number (range from 0 to 3) which ref result counter would increase by, for ordinary instruction (neither splitted nor merged), this value is 1
+     `ifdef CPU_2CMT
+     `define CMTBUS_VALID1   `ROQ.port1_submit
+     `define CMTBUS_CMTNUM1  {2'b0,`ROQ.port1_submit_num}
+     `endif
     
 
-    `ifdef RAND_TEST
-    `define RAND_TEST_BUS_WD 32*CPU_WIDTH + 5*32 + 2*CPU_WIDTH
-
-    //Below is a sample for 2 commit
-    
-    `define CORE0           simu_top.soc.cpu
-    `define FIX             `CORE0.cpu.cpu
-    `define EXBUS           `CORE0.cpu.cpu.wb_stage
-    `define EXBUS_EX        `EXBUS.wb_exception
-    `define EXBUS_ERET      `EXBUS.wb_eret     // (1bit) Please notify rand_tester when ERET is excuted
-    `define EXBUS_EXCODE    `EXBUS.wb_exccode
-    `define EXBUS_EPC       `EXBUS.wb_epc
-    `define GR_RTL          `FIX.registers.regs
-    `define CSR             `CORE0.cpu.cpu.csr
-    `define CR_BADVADDR     `CSR.badv
-    `define ROQ             `CORE0.cpu.cpu.wb_stage
-    `define CMTBUS_VALID0   `ROQ.port0_submit 
-    `define CMTBUS_CMTNUM0  {2'b0,`ROQ.port0_submit_num}    // (2bit) the number (range from 0 to 3) which ref result counter would increase by, for ordinary instruction (neither splitted nor merged), this value is 1
-    `ifdef CPU_2CMT
-    `define CMTBUS_VALID1   `ROQ.port1_submit
-    `define CMTBUS_CMTNUM1  {2'b0,`ROQ.port1_submit_num}
-    `endif
+ //   `ifdef RAND_TEST
+ //   `define RAND_TEST_BUS_WD 32*CPU_WIDTH + 5*32 + 2*CPU_WIDTH
+ 
+ //   //Below is a sample for 2 commit
+      
+ //   `define CORE0           simu_top.soc.cpu
+ //   `define FIX             `CORE0.cpu.cpu
+ //   `define EXBUS           `CORE0.cpu.cpu.wb_stage
+ //   `define EXBUS_EX        `EXBUS.wb_exception
+ //   `define EXBUS_ERET      `EXBUS.wb_eret     // (1bit) Please notify rand_tester when ERET is excuted
+ //   `define EXBUS_EXCODE    `EXBUS.wb_exccode
+ //   `define EXBUS_EPC       `EXBUS.wb_epc
+ //   `define GR_RTL          `FIX.registers.regs
+ //   `define CSR             `CORE0.cpu.cpu.csr
+ //   `define CR_BADVADDR     `CSR.badv
+ //   `define ROQ             `CORE0.cpu.cpu.wb_stage
+ //   `define CMTBUS_VALID0   `ROQ.port0_submit 
+ //   `define CMTBUS_CMTNUM0  {2'b0,`ROQ.port0_submit_num}    // (2bit) the number (range from 0 to 3) which ref result counter would increase by, for ordinary instruction (neither splitted nor merged), this value is 1
+ //   `ifdef CPU_2CMT
+ //   `define CMTBUS_VALID1   `ROQ.port1_submit
+ //   `define CMTBUS_CMTNUM1  {2'b0,`ROQ.port1_submit_num}
+ //   `endif
 
    
 `endif
