@@ -229,9 +229,9 @@ wire [15:0] mem_halfLoaded = ({16{sram_addr_low2bit==2'b00}} & ms_rdata[15: 0]) 
                              ({16{sram_addr_low2bit==2'b10}} & ms_rdata[31:16]) ;
 
 assign mem_result = ({32{ms_mem_size[0] &&  ms_mem_sign_exted}} & {{24{mem_byteLoaded[ 7]}}, mem_byteLoaded}) |
-					({32{ms_mem_size[0] && ~ms_mem_sign_exted}} & { 24'b0			       , mem_byteLoaded}) |
- 					({32{ms_mem_size[1] &&  ms_mem_sign_exted}} & {{16{mem_halfLoaded[15]}}, mem_halfLoaded}) |
-					({32{ms_mem_size[1] && ~ms_mem_sign_exted}} & { 16'b0				   , mem_halfLoaded}) |
+                    ({32{ms_mem_size[0] && ~ms_mem_sign_exted}} & { 24'b0                  , mem_byteLoaded}) |
+                    ({32{ms_mem_size[1] &&  ms_mem_sign_exted}} & {{16{mem_halfLoaded[15]}}, mem_halfLoaded}) |
+                    {ms_mem_size[1] && ~ms_mem_sign_exted}} & { 16'b0                      , mem_halfLoaded}) |
                     ({32{!ms_mem_size}}                         &   ms_rdata                                  ) ;
 
 assign ms_final_result = ({32{ms_load_op      }} & mem_result       )  |
