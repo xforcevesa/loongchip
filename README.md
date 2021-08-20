@@ -200,6 +200,10 @@ make tgt=rom
 当前内核及`pmon`仅适配`myCPU`处理器核。 
 
 ---
+### 工具下载链接
+http://114.242.206.180:24989/nextcloud/index.php/s/7xXTPkWg6Jn5KLW
+
+---
 
 ### 常见问题
 #### qemu无法运行
