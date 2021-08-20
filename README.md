@@ -23,7 +23,7 @@ chiplab项目致力于构建基于loongarch primary的soc敏捷开发平台。�
 │　　├── SPI    
 │　　├── MAC    
 │　　├── CONFREG   
-│　　├── qiwu  
+│　　├── myCPU  
 │　　└── xilinx_ip   
 ├── scripts   
 ├── sims   
@@ -171,7 +171,7 @@ module core_top(
      
 #### 综合、下板
 该步骤的工作目录位于`fpga`，当前支持龙芯实验箱及百芯板。目前该内容仅用于在板上启动内核。    
-演示可使用`qiwu`单发射五级流水。
+演示可使用`myCPU`单发射五级流水。
 使用vivado打开龙芯实验箱或者百芯目录下`system_run/system_run.xpr`工程，添加处理器核代码后，开始综合。   
 板上内核启动方法。`flash`加载`pmon`，通过网口加载内核代码。   
 具体流程：   
@@ -197,7 +197,7 @@ cd zloader.ls1b
 make cfg
 make tgt=rom
 ```
-当前内核及`pmon`仅适配`qiwu`处理器核。 
+当前内核及`pmon`仅适配`myCPU`处理器核。 
 
 ---
 
