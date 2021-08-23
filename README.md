@@ -219,3 +219,7 @@ g++: error: /usr/local/share/verilator/include/verilated.cpp: No such file or di
 g++: error: /usr/local/share/verilator/include/verilated_vcd_c.cpp: No such file or directory
 ```
 根据verilator库文件所安装的位置，需要调整`sims/verilator/run/Makefile`内的`VERILATOR_HOME`变量。当机器上存在多个版本的verilator时，注意配置成相对应的库路径。
+
+---
+### 交流群
+ [slack交流群](https://join.slack.com/t/chiplabworkspace/shared_invite/zt-v1927dwg-qqnHNTcAeko7QsUsdCRoPA)
