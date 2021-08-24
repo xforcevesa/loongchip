@@ -326,7 +326,7 @@ always @(posedge clk) begin
     end
     else case (write_buffer_state)
         write_buffer_idle: begin
-            if (main_state_is_lookup && cache_hit && request_buffer_op) begin
+            if (main_state_is_lookup && cache_hit && request_buffer_op && !tlb_excp_cancel_req) begin
                 write_buffer_state  <= write_buffer_write;
 
                 write_buffer_index  <= request_buffer_index;
@@ -337,7 +337,7 @@ always @(posedge clk) begin
             end
         end
         write_buffer_write: begin
-            if (main_state_is_lookup && cache_hit && request_buffer_op) begin
+            if (main_state_is_lookup && cache_hit && request_buffer_op && !tlb_excp_cancel_req) begin
                 write_buffer_state  <= write_buffer_write;
 
                 write_buffer_index  <= request_buffer_index;

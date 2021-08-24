@@ -42,7 +42,6 @@ module exe_stage(
     output        data_valid      ,
     output        data_op         ,
     output [ 2:0] data_size       ,
-    output [31:0] data_addr       ,
     output [ 3:0] data_wstrb      ,
     output [31:0] data_wdata      ,
     input         data_addr_ok    ,
@@ -50,6 +49,7 @@ module exe_stage(
     input  [18:0] csr_vppn          ,
     input  [ 1:0] csr_plv           ,
     //to addr trans
+    output [31:0] data_addr         ,
     output        data_fetch        ,
     //from ms
     input         ms_wr_tlbehi      ,

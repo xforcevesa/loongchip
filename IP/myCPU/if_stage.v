@@ -24,7 +24,6 @@ module if_stage(
     // inst cache interface
     output                         inst_valid        ,
     output                         inst_op           ,
-    output [31:0]                  inst_addr         ,
     output [ 3:0]                  inst_wstrb        ,
     output [31:0]                  inst_wdata        ,
     input                          inst_addr_ok      ,
@@ -49,6 +48,7 @@ module if_stage(
     input                          btb_en            ,
     input  [ 4:0]                  btb_index         ,
     //to addr trans
+    output [31:0]                  inst_addr         ,
     output                         inst_addr_trans_en,
     output                         dmw0_en           ,
     output                         dmw1_en           ,
@@ -86,7 +86,6 @@ wire         flush_sign;
 reg  [31:0]  inst_rd_buff;
 reg          inst_buff_enable;
 
-wire [31:0]  pv_addr;
 wire         da_mode;
 
 wire         btb_pre_error_flush;
@@ -211,7 +210,7 @@ assign real_nextpc = (flush_inst_req_state == flush_inst_req_full)              
 assign inst_valid = fs_allowin && !pfs_excp && !(tlb_excp_cancel_req && br_target_inst_req_state != br_target_inst_req_wait_br_target && flush_inst_req_state != flush_inst_req_full) || flush_sign || btb_pre_error_flush;
 assign inst_op     = 1'b0;
 assign inst_wstrb  = 4'h0;
-assign inst_addr   = pv_addr; //nextpc
+assign inst_addr   = real_nextpc; //nextpc
 assign inst_wdata  = 32'b0;
 
 assign fs_inst     = (inst_buff_enable) ? inst_rd_buff : inst_rdata;
@@ -249,8 +248,6 @@ assign inst_addr_trans_en = csr_pg && !csr_da && !dmw0_en && !dmw1_en;
 //addr dmw trans  //TOT
 assign dmw0_en = ((csr_dmw0[`PLV0] && csr_plv == 2'd0) || (csr_dmw0[`PLV3] && csr_plv == 2'd3)) && (fs_pc[31:29] == csr_dmw0[`VSEG]);
 assign dmw1_en = ((csr_dmw1[`PLV0] && csr_plv == 2'd0) || (csr_dmw1[`PLV3] && csr_plv == 2'd3)) && (fs_pc[31:29] == csr_dmw1[`VSEG]);
-
-assign pv_addr = real_nextpc;
 
 //uncache judgement
 assign da_mode = csr_da && !csr_pg;
