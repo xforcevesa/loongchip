@@ -31,11 +31,7 @@ THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 ------------------------------------------------------------------------------*/
 
-`ifdef SIMU
-  `define APB_DEV0  6'h00
-`else
-  `define APB_DEV0  6'h10
-`endif 
+`define APB_DEV0  6'h00 
 
 `define APB_DEV1  6'h1e
 
