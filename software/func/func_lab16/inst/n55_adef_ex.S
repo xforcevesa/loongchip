@@ -20,7 +20,7 @@ LEAF(n55_adef_ex_test)
 
 ##inst test
 ###1 
-  TEST_ADEF(0xb27f9789) 
+  TEST_ADEF(0x227f9789) 
   jirl    s5, s4, 0 
   add.w   zero, zero, zero
   bne     s2, s7, inst_error 
@@ -35,7 +35,7 @@ LEAF(n55_adef_ex_test)
 ###2
   li      t7, 0xd0000
   li      s2, 0x05 
-  TEST_ADEF(0xa101bbed)
+  TEST_ADEF(0x3101bbed)
   csrwr   s6, csr_era
   la.local  s5, 1f
   st.w    t7, t7, 4
@@ -57,7 +57,7 @@ LEAF(n55_adef_ex_test)
 
 ###3
   li      s2, 0x05
-  TEST_ADEF(0x84790977)
+  TEST_ADEF(0x44790977)
   csrwr   s6, csr_era 
   la.local  s5, 1f
   li      t7, 0xf 
@@ -138,6 +138,19 @@ LEAF(n55_adef_ex_test)
   and     t0, t0, t1 
   li      t1, 0x3 
   bne     t1, t0, inst_error 
+
+###should not generate adef excp 
+## 8
+  li      t0, 0xd0010
+  li      t1, 0x4c000020
+  st.w    t1, t0, 0
+  jirl    ra, t0, 0
+
+## 9
+  li      t0, 0xe0000000
+  li      t1, 0x4c000020  //write in "jirl zero, ra, 0" inst
+  st.w    t1, t0, 0 
+  jirl    ra, t0, 0
 
   li      t0, 0x0 
   li      t1, 0x3 

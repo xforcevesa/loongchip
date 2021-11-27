@@ -13,7 +13,7 @@ LEAF(n16_dmw_test)
     st.w   t0, t1, 0x0
     
     //for DMW mode
-    li     t8, 0xba
+    li     t8, 0x4c000020
     li     t1, 0xc0000000
     st.w   t8, t1, 0x0
 
@@ -27,7 +27,7 @@ LEAF(n16_dmw_test)
     st.w   t0, t1, 0x0
 
     // config the DMW for ld
-    li     t0, 0xec000001
+    li     t0, 0xec000009
     csrwr  t0, csr_dmw0
 
     invtlb 0x0, zero, zero
@@ -70,6 +70,18 @@ LEAF(n16_dmw_test)
 
     li      t0, 0xe0000000
     ld.w    t3, t0, 0x0
+
+    //let DA=0 and PG=1 and prl=3
+    li      t0, 0x3
+    li      t1, 0x3
+    csrxchg t0, t1, csr_crmd
+  
+    li      t0, 0xe0000000       //should not generate adem excp
+    ld.w    t0, t0, 0x0
+    bne     t0, t3, inst_error
+  
+    li      t0, 0xe0000000       //should not generate adef excp
+    jirl    ra, t0, 0
 
     //let DA=0 and PG=1 and prl=3
     li      t0, 0x13
