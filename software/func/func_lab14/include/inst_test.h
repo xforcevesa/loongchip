@@ -930,8 +930,8 @@
     li      t0, time_val; \
     ori     t0, t0, 0x1;  \
     csrwr   t0, csr_tcfg; \
-1:;                       \
     idle    0;            \
+1:;                       \
     csrwr   zero, csr_tcfg
 
 #define TEST_SOFT_INT_EX(estat_val) \
