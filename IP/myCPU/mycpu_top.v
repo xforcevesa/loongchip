@@ -82,6 +82,7 @@ wire         csr_wr_en;
 wire         excp_flush; 
 wire         ertn_flush;
 wire         icacop_flush;
+wire         idle_flush;
 wire         es_div_enable;
 wire         es_mul_div_sign;
 wire [31:0]  es_rj_value;
@@ -277,6 +278,9 @@ if_stage if_stage(
     .csr_era           (fs_csr_era     ),
     .excp_tlbrefill    (excp_tlbrefill ),
     .csr_tlbrentry     (csr_tlbrentry  ),
+    .has_int           (has_int        ), 
+    //idle
+    .idle_flush        (idle_flush     ),
     // inst cache interface
     .inst_valid        (inst_valid       ),
     .inst_op           (inst_op          ),
@@ -338,6 +342,8 @@ id_stage id_stage(
     .ertn_flush           (ertn_flush          ),
     .refetch_flush        (refetch_flush       ),
     .icacop_flush         (icacop_flush        ),
+    //idle
+    .idle_flush           (idle_flush          ),
     //tlb ins 
     .es_tlb_inst_stall    (es_tlb_inst_stall   ),
     .ms_tlb_inst_stall    (ms_tlb_inst_stall   ),
@@ -402,6 +408,8 @@ exe_stage exe_stage(
     .ertn_flush           (ertn_flush          ),
     .refetch_flush        (refetch_flush       ),
     .icacop_flush         (icacop_flush        ),
+    //idle
+    .idle_flush           (idle_flush          ),
     //tlb/cache ins
     .tlb_inst_stall       (es_tlb_inst_stall   ),
     //cache ins
@@ -476,6 +484,8 @@ mem_stage mem_stage(
     .ertn_flush           (ertn_flush          ),
     .refetch_flush        (refetch_flush       ),
     .icacop_flush         (icacop_flush        ),
+    //idle
+    .idle_flush           (idle_flush          ),
     //tlb ins 
     .tlb_inst_stall       (ms_tlb_inst_stall   ),
     //to es
@@ -538,6 +548,8 @@ wb_stage wb_stage(
     .excp_tlbrefill    (excp_tlbrefill   ),
     .excp_tlb          (excp_tlb         ),
     .excp_tlb_vppn     (excp_tlb_vppn    ),
+    //idle
+    .idle_flush        (idle_flush       ),
     //llbit
     .ws_llbit_set      (ws_llbit_set     ),
     .ws_llbit          (ws_llbit         ),

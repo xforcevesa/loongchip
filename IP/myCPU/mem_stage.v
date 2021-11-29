@@ -25,6 +25,8 @@ module mem_stage(
     input             ertn_flush    ,
     input             refetch_flush ,
     input             icacop_flush  ,
+    //idle
+    input             idle_flush    ,
     //tlb ins
     output            tlb_inst_stall,
     //to es 
@@ -97,8 +99,10 @@ wire        ms_br_pre;
 wire        ms_br_pre_error;
 wire        ms_preld_inst;
 wire        ms_cacop;
+wire        ms_idle;
 
-assign {ms_cacop         ,  //181:181
+assign {ms_idle          ,  //182:182
+        ms_cacop         ,  //181:181
         ms_preld_inst    ,  //180:180
         ms_br_pre_error  ,  //179:179
         ms_br_pre        ,  //178:178
@@ -163,7 +167,8 @@ wire        excp_ppi ;
 wire        da_mode  ;
 wire        pg_mode  ;
 
-assign ms_to_ws_bus = {ms_br_pre_error,  //216:216
+assign ms_to_ws_bus = {ms_idle        ,  //217:217
+                       ms_br_pre_error,  //216:216
                        ms_br_pre      ,  //215:215
                        dcache_miss    ,  //214:214
                        access_mem     ,  //213:213
@@ -214,7 +219,7 @@ end
 
 assign access_mem = ms_store_op || ms_load_op;
 
-assign flush_sign = excp_flush || ertn_flush || refetch_flush || icacop_flush;
+assign flush_sign = excp_flush || ertn_flush || refetch_flush || icacop_flush || idle_flush;
 
 assign ms_rdata = data_buff_enable ? data_rd_buff : data_rdata;
 
@@ -284,7 +289,7 @@ assign data_uncache_en = (da_mode && (csr_datm == 2'b0))                 ||
                          (data_addr_trans_en && (data_tlb_mat == 2'b0))  ||
                          disable_cache;
 
-assign ms_flush = (excp | ms_ertn | (ms_csr_we | (ms_ll_w | ms_sc_w) & !excp) | ms_refetch) & ms_valid;
+assign ms_flush = (excp | ms_ertn | (ms_csr_we | (ms_ll_w | ms_sc_w) & !excp) | ms_refetch | ms_idle) & ms_valid;
 
 assign tlb_inst_stall = (ms_tlbsrch || ms_tlbrd) && ms_valid;
 

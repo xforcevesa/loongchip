@@ -22,6 +22,8 @@ module id_stage(
     input                               ertn_flush    ,
     input                               refetch_flush ,
     input                               icacop_flush  ,
+    //idle
+    input                               idle_flush    ,
     //tlb ins
     input                               es_tlb_inst_stall,
     input                               ms_tlb_inst_stall,
@@ -94,7 +96,7 @@ assign {rf_we   ,  //37:37
         rf_wdata   //31:0
        } = ws_to_rf_bus;
 
-wire        idle_stall;
+//wire        idle_stall;
 wire        br_taken;
 wire [31:0] br_target;
 wire        btb_pre_error_flush;
@@ -295,7 +297,8 @@ assign br_bus       = {btb_pre_error_flush,           //32:32
                        btb_pre_error_flush_target     //31:0
                       };
 
-assign ds_to_es_bus = {btb_pre_error_flush, //234:234
+assign ds_to_es_bus = {inst_idle     ,  //235:235
+                       btb_pre_error_flush, //234:234
                        br_to_btb     ,  //233:233
                        ds_icache_miss,  //232:232
                        br_inst       ,  //231:231
@@ -335,12 +338,12 @@ assign ds_to_es_bus = {btb_pre_error_flush, //234:234
                        ds_pc            //31 :0
                       };
 
-assign flush_sign = excp_flush || ertn_flush || refetch_flush || icacop_flush;
+assign flush_sign = excp_flush || ertn_flush || refetch_flush || icacop_flush || idle_flush;
 
 assign fs_excp = fs_to_ds_bus[68];
 
 //wait inst will stall at ds.
-assign ds_ready_go    = !(rf2_forward_stall || rf1_forward_stall || idle_stall || tlb_inst_stall || ibar_stall || dbar_stall) || excp;
+assign ds_ready_go    = !(rf2_forward_stall || rf1_forward_stall/*|| idle_stall*/ || tlb_inst_stall || ibar_stall || dbar_stall) || excp;
 assign ds_allowin     = !ds_valid || ds_ready_go && es_allowin;
 assign ds_to_es_valid = ds_valid && ds_ready_go;
 always @(posedge clk) begin   //bug1 no reset; branch no delay slot
@@ -783,10 +786,10 @@ assign br_target = ({32{inst_beq || inst_bne || inst_bl || inst_b ||
                     inst_blt || inst_bge || inst_bltu || inst_bgeu}} & (ds_pc + ds_imm   ))            |
                    ({32{inst_jirl}}                                  & (rj_value_forward_es + ds_imm)) ;
 
-assign idle_stall = inst_idle & ds_valid & !has_int;
+//assign idle_stall = inst_idle & ds_valid & !has_int;
 
-assign excp     = excp_ipe | inst_syscall | inst_break | ds_excp | excp_ine | has_int;
-assign excp_num = {excp_ipe, excp_ine, inst_break, inst_syscall, ds_excp_num, has_int};
+assign excp     = inst_syscall | inst_break | ds_excp | excp_ine | has_int;
+assign excp_num = {1'b0, excp_ine, inst_break, inst_syscall, ds_excp_num, has_int};
 
 assign rd_csr_addr = csr_idx;
 

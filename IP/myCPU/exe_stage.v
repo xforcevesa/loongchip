@@ -27,6 +27,8 @@ module exe_stage(
     input         ertn_flush      ,
     input         refetch_flush   ,
     input         icacop_flush    ,
+    //idle
+    input         idle_flush      ,
     //tlb/cache ins 
     output        tlb_inst_stall  ,
     //cache ins
@@ -98,6 +100,7 @@ wire        es_cacop       ;
 wire        es_preld       ;
 wire        es_br_inst     ;
 wire        es_icache_miss ;
+wire        es_idle        ;
 
 wire        es_load_op     ;
 
@@ -132,7 +135,8 @@ wire        preld_inst       ;
 wire        es_br_pre_error  ;
 wire        es_br_pre        ;
 
-assign {es_br_pre_error  ,  //234:234
+assign {es_idle          ,  //235:235
+        es_br_pre_error  ,  //234:234
         es_br_pre        ,  //233:233
         es_icache_miss   ,  //232:232
         es_br_inst       ,  //231:231
@@ -177,7 +181,8 @@ wire [31:0] es_alu_src2   ;
 wire [31:0] es_alu_result ;
 wire [31:0] exe_result    ;
 
-assign es_to_ms_bus = {es_cacop         ,  //181:181
+assign es_to_ms_bus = {es_idle          ,  //182:182
+                       es_cacop         ,  //181:181
                        preld_inst       ,  //180:180
                        es_br_pre_error  ,  //179:179
                        es_br_pre        ,  //178:178
@@ -213,7 +218,7 @@ assign es_to_ms_bus = {es_cacop         ,  //181:181
 
 assign access_mem = es_load_op || es_store_op;
 
-assign es_flush_sign  = excp_flush || ertn_flush || refetch_flush || icacop_flush;
+assign es_flush_sign  = excp_flush || ertn_flush || refetch_flush || icacop_flush || idle_flush;
 
 assign icacop_inst_stall = icacop_op_en && !icache_unbusy;
 

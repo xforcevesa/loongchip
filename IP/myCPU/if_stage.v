@@ -21,6 +21,9 @@ module if_stage(
     input  [31:0]                  csr_era          ,
     input                          excp_tlbrefill   ,
     input  [31:0]                  csr_tlbrentry    ,
+    input                          has_int          ,
+    //idle
+    input                          idle_flush       ,
     // inst cache interface
     output                         inst_valid        ,
     output                         inst_op           ,
@@ -96,6 +99,12 @@ wire         flush_inst_go_dirt;
 
 wire         fetch_btb_target;
 
+reg          idle_lock;
+
+wire         tlb_excp_lock_pc;
+
+wire         fs_excp_adef;
+
 assign {btb_pre_error_flush,
         btb_pre_error_flush_target  } = br_bus;
 
@@ -112,10 +121,10 @@ assign fs_to_ds_bus = {btb_ret_pc,      //108:77
                        fs_pc            //31:0
                       };
 
-assign flush_sign = ertn_flush || excp_flush || refetch_flush || icacop_flush;
+assign flush_sign = ertn_flush || excp_flush || refetch_flush || icacop_flush || idle_flush;
 
-assign flush_inst_delay = flush_sign && !inst_addr_ok;
-assign flush_inst_go_dirt = flush_sign && inst_addr_ok;
+assign flush_inst_delay = flush_sign && !inst_addr_ok || idle_flush;
+assign flush_inst_go_dirt = flush_sign && inst_addr_ok && !idle_flush;
 
 //flush state machine
 reg [31:0] flush_inst_req_buffer;
@@ -147,12 +156,24 @@ end
 
 assign fetch_btb_target = btb_taken && btb_en;
 
+always @(posedge clk) begin
+    if (reset) begin
+        idle_lock <= 1'b0;
+    end
+    else if (idle_flush && !has_int) begin
+        idle_lock <= 1'b1;
+    end
+    else if (has_int) begin
+        idle_lock <= 1'b0;
+    end
+end
+
 //br state machine
 reg [31:0] br_target_inst_req_buffer;
-reg [ 1:0] br_target_inst_req_state;
-localparam br_target_inst_req_empty = 2'b00;
-localparam br_target_inst_req_wait_slot = 2'b01;
-localparam br_target_inst_req_wait_br_target = 2'b10;
+reg [ 2:0] br_target_inst_req_state;
+localparam br_target_inst_req_empty = 3'b001;
+localparam br_target_inst_req_wait_slot = 3'b010;
+localparam br_target_inst_req_wait_br_target = 3'b100;
 
 always @(posedge clk) begin
     if (reset) begin
@@ -195,19 +216,21 @@ end
 assign pfs_ready_go = (inst_valid || pfs_excp) && inst_addr_ok;
 assign to_fs_valid  = ~reset && pfs_ready_go;
 assign seq_pc       = fs_pc + 32'h4;
-assign nextpc       = (excp_flush && !excp_tlbrefill)   ? csr_eentry                 :
-                      (excp_flush && excp_tlbrefill)    ? csr_tlbrentry              :
-                      ertn_flush                        ? csr_era                    :
-                      (refetch_flush || icacop_flush)   ? (ws_pc + 32'h4)            :
-                      btb_pre_error_flush && fs_valid   ? btb_pre_error_flush_target :
-                      fetch_btb_target                  ? btb_ret_pc                 :
-                                                          seq_pc;                                                   
+assign nextpc       = (excp_flush && !excp_tlbrefill)               ? csr_eentry                 :
+                      (excp_flush && excp_tlbrefill)                ? csr_tlbrentry              :
+                      ertn_flush                                    ? csr_era                    :
+                      (refetch_flush || icacop_flush || idle_flush) ? (ws_pc + 32'h4)            :
+                      btb_pre_error_flush && fs_valid               ? btb_pre_error_flush_target :
+                      fetch_btb_target                              ? btb_ret_pc                 :
+                                                                      seq_pc;                                                   
 
 assign real_nextpc = (flush_inst_req_state == flush_inst_req_full)                                  ? flush_inst_req_buffer     :
                      (br_target_inst_req_state == br_target_inst_req_wait_br_target) && !flush_sign ? br_target_inst_req_buffer : nextpc;
 
+assign tlb_excp_lock_pc = tlb_excp_cancel_req && br_target_inst_req_state != br_target_inst_req_wait_br_target && flush_inst_req_state != flush_inst_req_full;
+
 //when flush_sign meet icache_busy 1, flush_sign's inst valid should not set immediately
-assign inst_valid = fs_allowin && !pfs_excp && !(tlb_excp_cancel_req && br_target_inst_req_state != br_target_inst_req_wait_br_target && flush_inst_req_state != flush_inst_req_full) || flush_sign || btb_pre_error_flush;
+assign inst_valid = (fs_allowin && !pfs_excp && !tlb_excp_lock_pc || flush_sign || btb_pre_error_flush) && !(idle_flush || idle_lock);
 assign inst_op     = 1'b0;
 assign inst_wstrb  = 4'h0;
 assign inst_addr   = real_nextpc; //nextpc
@@ -228,7 +251,8 @@ always @(posedge clk) begin
 end
 
 //exception
-assign pfs_excp_adef = (real_nextpc[0] || real_nextpc[1]) || (real_nextpc[31] && (csr_plv == 2'd3) && inst_addr_trans_en); //user can only access low half address space, trigger only in tlb trans
+assign pfs_excp_adef = (real_nextpc[0] || real_nextpc[1]); //user can only access low half address space, trigger only in tlb trans
+assign fs_excp_adef  = fs_pc[31] && (csr_plv == 2'd3) && inst_addr_trans_en;
 //tlb 
 assign fs_excp_tlbr = !inst_tlb_found && inst_addr_trans_en;
 assign fs_excp_pif  = !inst_tlb_v && inst_addr_trans_en;
@@ -239,8 +263,8 @@ assign tlb_excp_cancel_req = fs_excp_tlbr || fs_excp_pif || fs_excp_ppi;
 assign pfs_excp = pfs_excp_adef;
 assign pfs_excp_num = {pfs_excp_adef};
 
-assign excp = fs_excp || fs_excp_tlbr || fs_excp_pif || fs_excp_ppi;
-assign excp_num = {fs_excp_ppi, fs_excp_pif, fs_excp_tlbr, fs_excp_num};
+assign excp = fs_excp || fs_excp_tlbr || fs_excp_pif || fs_excp_ppi || fs_excp_adef;
+assign excp_num = {fs_excp_ppi, fs_excp_pif, fs_excp_tlbr, fs_excp_num || fs_excp_adef};
 
 //addr trans
 assign inst_addr_trans_en = csr_pg && !csr_da && !dmw0_en && !dmw1_en;

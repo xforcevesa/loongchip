@@ -29,6 +29,8 @@ module wb_stage(
     output        excp_tlbrefill                   ,
     output        excp_tlb                         ,
     output [18:0] excp_tlb_vppn                    ,
+    //idle
+    output        idle_flush                       ,
     //llbit
     output        ws_llbit_set                     ,
     output        ws_llbit                         ,
@@ -62,6 +64,8 @@ module wb_stage(
 reg         ws_valid;
 wire        ws_ready_go;
 
+wire        flush_sign;
+
 reg [`MS_TO_WS_BUS_WD -1:0] ms_to_ws_bus_r;
 wire        ws_gr_we;
 wire        ws_excp;
@@ -89,9 +93,10 @@ wire        ws_access_mem;
 wire        ws_dcache_miss;
 wire        ws_br_pre;
 wire        ws_br_pre_error;
-wire        flush_sign;
+wire        ws_idle;
 
-assign {ws_br_pre_error,  //216:216
+assign {ws_idle        ,  //217:217
+        ws_br_pre_error,  //216:216
         ws_br_pre      ,  //215:215
         ws_dcache_miss ,  //214:214
         ws_access_mem  ,  //213:213
@@ -123,7 +128,7 @@ assign {ws_br_pre_error,  //216:216
         ws_pc             //31:0
        } = ms_to_ws_bus_r;
 
-assign flush_sign = excp_flush || ertn_flush || refetch_flush || icacop_flush;
+assign flush_sign = excp_flush || ertn_flush || refetch_flush || icacop_flush || idle_flush;
 
 wire        rf_we;
 wire [4 :0] rf_waddr;
@@ -170,6 +175,8 @@ assign wr_csr_addr  = ws_csr_idx;
 assign wr_csr_data  = ws_csr_result; 
 
 assign icacop_flush = ws_icacop_op_en && ws_valid;
+
+assign idle_flush = ws_idle && ws_valid;
 
 assign tlb_inst_stall = (ws_tlbsrch || ws_tlbrd) && ws_valid;
 

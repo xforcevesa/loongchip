@@ -190,15 +190,15 @@ wire         req_or_inst_valid;
 reg          lookup_way0_hit_buffer;
 reg          lookup_way1_hit_buffer;
 
-localparam main_idle    = 3'b000;
-localparam main_lookup  = 3'b001;
-localparam main_miss    = 3'b010;
-localparam main_replace = 3'b011;
-localparam main_refill  = 3'b100;
+localparam main_idle    = 5'b00001;
+localparam main_lookup  = 5'b00010;
+localparam main_miss    = 5'b00100;
+localparam main_replace = 5'b01000;
+localparam main_refill  = 5'b10000;
 localparam write_buffer_idle  = 1'b0;
 localparam write_buffer_write = 1'b1; 
 
-reg [2:0] main_state;
+reg [4:0] main_state;
 reg       write_buffer_state;
 
 reg       rd_req_buffer;
