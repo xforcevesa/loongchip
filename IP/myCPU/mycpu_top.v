@@ -417,13 +417,13 @@ exe_stage exe_stage(
     .data_valid           (data_valid          ),  
     .data_op              (data_op             ), 
     .data_size            (data_size           ),
-    .data_addr            (data_vaddr          ), 
     .data_wstrb           (data_wstrb          ), 
     .data_wdata           (data_wdata          ), 
     .data_addr_ok         (data_addr_ok        ),
     //from csr
     .csr_vppn             (csr_vppn            ),
-    .csr_plv              (csr_plv             ),
+    //to addr trans
+    .data_addr            (data_vaddr          ), 
     .data_fetch           (data_fetch          ),
     //from ms 
     .ms_wr_tlbehi         (ms_wr_tlbehi        ),

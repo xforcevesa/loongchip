@@ -47,7 +47,6 @@ module exe_stage(
     input         data_addr_ok    ,
     //from csr 
     input  [18:0] csr_vppn          ,
-    input  [ 1:0] csr_plv           ,
     //to addr trans
     output [31:0] data_addr         ,
     output        data_fetch        ,
@@ -81,7 +80,7 @@ wire        es_csr_mask    ;
 wire        es_excp        ;
 wire        excp           ;
 wire [ 8:0] es_excp_num    ;
-wire [10:0] excp_num       ;
+wire [ 9:0] excp_num       ;
 wire        es_ertn        ;
 wire        es_mul_enable  ;
 wire        div_stall      ;
@@ -107,8 +106,8 @@ wire        forward_enable ;
 wire        dest_zero      ;
 
 wire        excp_ale       ;
-wire        excp_adem      ;
-wire [31:0] error_va       ;
+//wire        excp_adem      ;
+//wire [31:0] error_va       ;
 
 wire        es_flush_sign  ;
 wire [ 3:0] wr_byte_en     ;
@@ -178,27 +177,26 @@ wire [31:0] es_alu_src2   ;
 wire [31:0] es_alu_result ;
 wire [31:0] exe_result    ;
 
-assign es_to_ms_bus = {es_cacop         ,  //214:214
-                       preld_inst       ,  //213:213
-                       es_br_pre_error  ,  //212:212
-                       es_br_pre        ,  //211:211
-                       es_icache_miss   ,  //210:210
-                       es_br_inst       ,  //209:209
-                       icacop_op_en     ,  //208:208
-                       es_mem_sign_exted,  //207:207  //only add this, not used. 
-                       es_invtlb_vpn    ,  //206:188
-                       es_invtlb_asid   ,  //187:178
-                       es_invtlb        ,  //177:177
-                       es_tlbrd         ,  //176:176
-                       es_refetch       ,  //175:175
-                       es_tlbfill       ,  //174:174
-                       es_tlbwr         ,  //173:173
-                       es_tlbsrch       ,  //172:172
-                       es_store_op      ,  //171:171
-                       error_va         ,  //170:139
-                       es_sc_w          ,  //138:138
-                       es_ll_w          ,  //137:137
-                       excp_num         ,  //136:126
+assign es_to_ms_bus = {es_cacop         ,  //181:181
+                       preld_inst       ,  //180:180
+                       es_br_pre_error  ,  //179:179
+                       es_br_pre        ,  //178:178
+                       es_icache_miss   ,  //177:177
+                       es_br_inst       ,  //176:176
+                       icacop_op_en     ,  //175:175
+                       es_mem_sign_exted,  //174:174  //only add this, not used. 
+                       es_invtlb_vpn    ,  //173:155
+                       es_invtlb_asid   ,  //154:145
+                       es_invtlb        ,  //144:144
+                       es_tlbrd         ,  //143:143
+                       es_refetch       ,  //142:142
+                       es_tlbfill       ,  //141:141
+                       es_tlbwr         ,  //140:140
+                       es_tlbsrch       ,  //139:139
+                       es_store_op      ,  //138:138
+                       es_sc_w          ,  //137:137
+                       es_ll_w          ,  //136:136
+                       excp_num         ,  //135:126
                        es_csr_we        ,  //125:125
                        es_csr_idx       ,  //124:111
                        es_csr_result    ,  //110:79
@@ -274,12 +272,9 @@ assign es_csr_result   = es_csr_mask ? csr_mask_result : es_rkd_value;
 assign excp_ale        = access_mem & ((es_mem_size[0] &  1'b0)                                  | 
                                        (es_mem_size[1] &  es_alu_result[0])                      | 
                                        (!es_mem_size   & (es_alu_result[0] | es_alu_result[1]))) ;
-
-assign excp_adem       = access_mem && es_alu_result[31] && (csr_plv == 2'd3);
-
-assign error_va        = es_alu_result;                                
-assign excp            = es_excp || excp_ale || excp_adem;
-assign excp_num        = {excp_adem, excp_ale, es_excp_num};
+                                
+assign excp            = es_excp || excp_ale;
+assign excp_num        = {excp_ale, es_excp_num};
 
 assign sram_addr_low2bit = {es_alu_result[1], es_alu_result[0]};
 

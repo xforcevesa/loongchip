@@ -73,14 +73,13 @@ wire [ 4:0] ms_dest;
 wire [31:0] ms_exe_result;
 wire [31:0] ms_pc;
 wire        ms_excp;
-wire [10:0] ms_excp_num;
+wire [ 9:0] ms_excp_num;
 wire        ms_ertn;
 wire [31:0] ms_csr_result;
 wire [13:0] ms_csr_idx;
 wire        ms_csr_we;
 wire        ms_ll_w;
 wire        ms_sc_w;
-wire [31:0] ms_error_va;
 wire        ms_store_op;
 wire        ms_tlbsrch;
 wire        ms_tlbfill;
@@ -99,27 +98,26 @@ wire        ms_br_pre_error;
 wire        ms_preld_inst;
 wire        ms_cacop;
 
-assign {ms_cacop         ,  //214:214
-        ms_preld_inst    ,  //213:213
-        ms_br_pre_error  ,  //212:212
-        ms_br_pre        ,  //211:211
-        ms_icache_miss   ,  //210:210
-        ms_br_inst       ,  //209:209
-        ms_icacop_op_en  ,  //208:208
-        ms_mem_sign_exted,  //207:207
-        ms_invtlb_vpn    ,  //206:188
-        ms_invtlb_asid   ,  //187:178
-        ms_invtlb        ,  //177:177
-        ms_tlbrd         ,  //176:176
-        ms_refetch       ,  //175:175
-        ms_tlbfill       ,  //174:174
-        ms_tlbwr         ,  //173:173
-        ms_tlbsrch       ,  //172:172
-        ms_store_op      ,  //171:171
-        ms_error_va      ,  //170:139
-        ms_sc_w          ,  //138:138
-        ms_ll_w          ,  //137:137
-        ms_excp_num      ,  //136:126
+assign {ms_cacop         ,  //181:181
+        ms_preld_inst    ,  //180:180
+        ms_br_pre_error  ,  //179:179
+        ms_br_pre        ,  //178:178
+        ms_icache_miss   ,  //177:177
+        ms_br_inst       ,  //176:176
+        ms_icacop_op_en  ,  //175:175
+        ms_mem_sign_exted,  //174:174
+        ms_invtlb_vpn    ,  //173:155
+        ms_invtlb_asid   ,  //154:145
+        ms_invtlb        ,  //144:144
+        ms_tlbrd         ,  //143:143
+        ms_refetch       ,  //142:142
+        ms_tlbfill       ,  //141:141
+        ms_tlbwr         ,  //140:140
+        ms_tlbsrch       ,  //139:139
+        ms_store_op      ,  //138:138
+        ms_sc_w          ,  //137:137
+        ms_ll_w          ,  //136:136
+        ms_excp_num      ,  //135:126
         ms_csr_we        ,  //125:125
         ms_csr_idx       ,  //124:111
         ms_csr_result    ,  //110:79
@@ -153,6 +151,9 @@ wire        dest_zero;
 wire [15:0] excp_num;
 wire        excp;
 
+wire [31:0] error_va;
+
+wire        excp_adem;
 wire        excp_tlbr;
 wire        excp_pil ;
 wire        excp_pis ;
@@ -179,7 +180,7 @@ assign ms_to_ws_bus = {ms_br_pre_error,  //216:216
                        data_tlb_index ,  //175:171
                        data_tlb_found ,  //170:170
                        ms_tlbsrch     ,  //169:169
-                       ms_error_va    ,  //168:137
+                       error_va       ,  //168:137
                        ms_sc_w        ,  //136:136
                        ms_ll_w        ,  //135:135
                        excp_num       ,  //134:119
@@ -250,6 +251,8 @@ assign ms_to_ds_forward_bus = {dep_need_stall,  //38:38
                                ms_final_result  //31:0
                               };
 
+assign error_va = ms_exe_result;
+
 //addr trans
 assign pg_mode = !csr_da && csr_pg;
 //uncache judgement
@@ -258,11 +261,11 @@ assign da_mode =  csr_da && !csr_pg;
 assign data_addr_trans_en = pg_mode && !dmw0_en && !dmw1_en && !cacop_op_mode_di;
 
 //addr dmw trans
-assign dmw0_en = ((csr_dmw0[`PLV0] && csr_plv == 2'd0) || (csr_dmw0[`PLV3] && csr_plv == 2'd3)) && (ms_error_va[31:29] == csr_dmw0[`VSEG]);
-assign dmw1_en = ((csr_dmw1[`PLV0] && csr_plv == 2'd0) || (csr_dmw1[`PLV3] && csr_plv == 2'd3)) && (ms_error_va[31:29] == csr_dmw1[`VSEG]);
+assign dmw0_en = ((csr_dmw0[`PLV0] && csr_plv == 2'd0) || (csr_dmw0[`PLV3] && csr_plv == 2'd3)) && (ms_exe_result[31:29] == csr_dmw0[`VSEG]);
+assign dmw1_en = ((csr_dmw1[`PLV0] && csr_plv == 2'd0) || (csr_dmw1[`PLV3] && csr_plv == 2'd3)) && (ms_exe_result[31:29] == csr_dmw1[`VSEG]);
 
-assign excp = excp_tlbr || excp_pil || excp_pis || excp_ppi || excp_pme || ms_excp;
-assign excp_num = {excp_pil, excp_pis, excp_ppi, excp_pme, excp_tlbr, ms_excp_num};
+assign excp = excp_tlbr || excp_pil || excp_pis || excp_ppi || excp_pme || excp_adem || ms_excp;
+assign excp_num = {excp_pil, excp_pis, excp_ppi, excp_pme, excp_tlbr, excp_adem, ms_excp_num};
 
 //tlb exception //preld should not generate these excp
 assign excp_tlbr = (access_mem || ms_cacop) && !data_tlb_found && data_addr_trans_en;
@@ -271,7 +274,9 @@ assign excp_pis  = ms_store_op && !data_tlb_v && data_addr_trans_en;
 assign excp_ppi  = access_mem && data_tlb_v && (csr_plv > data_tlb_plv) && data_addr_trans_en;
 assign excp_pme  = ms_store_op && data_tlb_v && (csr_plv <= data_tlb_plv) && !data_tlb_d && data_addr_trans_en;
 
-assign tlb_excp_cancel_req = excp_tlbr || excp_pil || excp_pis || excp_ppi || excp_pme;
+assign excp_adem = access_mem && ms_exe_result[31] && (csr_plv == 2'd3) && data_addr_trans_en;
+
+assign tlb_excp_cancel_req = excp_tlbr || excp_pil || excp_pis || excp_ppi || excp_pme || excp_adem;
 
 assign data_uncache_en = (da_mode && (csr_datm == 2'b0))                 || 
                          (dmw0_en && (csr_dmw0[`DMW_MAT] == 2'b0))       ||

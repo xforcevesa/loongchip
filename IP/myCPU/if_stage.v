@@ -228,7 +228,7 @@ always @(posedge clk) begin
 end
 
 //exception
-assign pfs_excp_adef = (real_nextpc[0] || real_nextpc[1]) || (real_nextpc[31] && (csr_plv == 2'd3)); //user can only access low half address space
+assign pfs_excp_adef = (real_nextpc[0] || real_nextpc[1]) || (real_nextpc[31] && (csr_plv == 2'd3) && inst_addr_trans_en); //user can only access low half address space, trigger only in tlb trans
 //tlb 
 assign fs_excp_tlbr = !inst_tlb_found && inst_addr_trans_en;
 assign fs_excp_pif  = !inst_tlb_v && inst_addr_trans_en;
