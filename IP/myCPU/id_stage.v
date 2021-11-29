@@ -285,6 +285,9 @@ reg         br_jirl;
 wire        br_need_reg_data;
 wire        br_to_btb;
 
+wire        inst_need_rj;
+wire        inst_need_rkd;
+
 wire [31:0] rj_value_forward_es;
 wire [31:0] rkd_value_forward_es;
 
@@ -624,6 +627,88 @@ assign csr_mask      = inst_csrxchg;
 
 assign mem_size  = {mem_h_size, mem_b_size};
 
+assign inst_need_rj = inst_add_w   |
+                      inst_sub_w   |
+                      inst_addi_w  |
+                      inst_slt     |
+                      inst_sltu    |
+                      inst_slti    |
+                      inst_sltui   |
+                      inst_and     |
+                      inst_or      |
+                      inst_nor     |
+                      inst_xor     |
+                      inst_andi    |
+                      inst_ori     |
+                      inst_xori    |
+                      inst_mul_w   |
+                      inst_mulh_w  |
+                      inst_mulh_wu |
+                      inst_div_w   |
+                      inst_div_wu  |
+                      inst_mod_w   |
+                      inst_mod_wu  |
+                      inst_sll_w   |
+                      inst_srl_w   |
+                      inst_sra_w   |
+                      inst_slli_w  |
+                      inst_srli_w  |
+                      inst_srai_w  |
+                      inst_beq     |
+                      inst_bne     |
+                      inst_blt     |
+                      inst_bltu    |
+                      inst_bge     |
+                      inst_bgeu    |
+                      inst_jirl    |
+                      inst_ld_b    |
+                      inst_ld_bu   |
+                      inst_ld_h    |
+                      inst_ld_hu   |
+                      inst_ld_w    |
+                      inst_st_b    |
+                      inst_st_h    |
+                      inst_st_w    |
+                      inst_preld   |
+                      inst_ll_w    |
+                      inst_sc_w    |
+                      inst_csrxchg |
+                      inst_cacop   |
+                      inst_invtlb  ;
+                      
+assign inst_need_rkd = inst_add_w   |
+                       inst_sub_w   |
+                       inst_slt     |
+                       inst_sltu    |
+                       inst_and     |
+                       inst_or      |
+                       inst_nor     |
+                       inst_xor     |
+                       inst_mul_w   |
+                       inst_mulh_w  |
+                       inst_mulh_wu |
+                       inst_div_w   |
+                       inst_div_wu  |
+                       inst_mod_w   |
+                       inst_mod_wu  |
+                       inst_sll_w   |
+                       inst_srl_w   |
+                       inst_sra_w   |
+                       inst_beq     |
+                       inst_bne     |
+                       inst_blt     |
+                       inst_bltu    |
+                       inst_bge     |
+                       inst_bgeu    |
+                       inst_st_b    |
+                       inst_st_h    |
+                       inst_st_w    |
+                       inst_sc_w    |
+                       inst_csrwr   |
+                       inst_csrxchg |
+                       inst_invtlb  ;
+
+
 assign rf_raddr1 = rj;
 assign rf_raddr2 = src_reg_is_rd ? rd : rk;
 regfile u_regfile(
@@ -650,13 +735,13 @@ assign {ms_dep_need_stall,
        } = ms_to_ds_forward_bus;
 
 //exe stage first forward
-assign {rf1_forward_stall, rj_value, rj_value_forward_es} = ((rf_raddr1 == es_forward_reg) && es_forward_enable) ? {es_dep_need_stall, es_forward_data, es_forward_data} :
-                                                            ((rf_raddr1 == ms_forward_reg) && ms_forward_enable) ? {ms_dep_need_stall || br_need_reg_data, ms_forward_data, rf_rdata1} :
-                                                                                                                   {1'b0, rf_rdata1, rf_rdata1}; 
+assign {rf1_forward_stall, rj_value, rj_value_forward_es} = ((rf_raddr1 == es_forward_reg) && es_forward_enable && inst_need_rj) ? {es_dep_need_stall, es_forward_data, es_forward_data} :
+                                                            ((rf_raddr1 == ms_forward_reg) && ms_forward_enable && inst_need_rj) ? {ms_dep_need_stall || br_need_reg_data, ms_forward_data, rf_rdata1} :
+                                                                                                                                   {1'b0, rf_rdata1, rf_rdata1}; 
 
-assign {rf2_forward_stall, rkd_value, rkd_value_forward_es} = ((rf_raddr2 == es_forward_reg) && es_forward_enable) ? {es_dep_need_stall, es_forward_data, es_forward_data} :
-                                                              ((rf_raddr2 == ms_forward_reg) && ms_forward_enable) ? {ms_dep_need_stall || br_need_reg_data, ms_forward_data, rf_rdata2} :
-                                                                                                                     {1'b0, rf_rdata2, rf_rdata2};
+assign {rf2_forward_stall, rkd_value, rkd_value_forward_es} = ((rf_raddr2 == es_forward_reg) && es_forward_enable && inst_need_rkd) ? {es_dep_need_stall, es_forward_data, es_forward_data} :
+                                                              ((rf_raddr2 == ms_forward_reg) && ms_forward_enable && inst_need_rkd) ? {ms_dep_need_stall || br_need_reg_data, ms_forward_data, rf_rdata2} :
+                                                                                                                                      {1'b0, rf_rdata2, rf_rdata2};
 
 assign rj_eq_rd        = (rj_value_forward_es == rkd_value_forward_es);
 assign rj_lt_rd_unsign = (rj_value_forward_es < rkd_value_forward_es);   //operate "<" has nice timing

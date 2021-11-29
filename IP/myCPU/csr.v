@@ -383,7 +383,7 @@ end
 always @(posedge clk) begin
     if (reset) begin
         csr_tlbidx[23: 5] <= 19'b0;
-        csr_tlbidx[31]    <= 1'b0;
+        csr_tlbidx[30]    <= 1'b0;
     end
     else if (tlbidx_wen) begin
         csr_tlbidx[`INDEX] <= wr_data[`INDEX];

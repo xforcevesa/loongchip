@@ -133,7 +133,10 @@ generate
     for (i = 0; i < BTBNUM; i = i + 1)
         begin: match
         always @(posedge clk) begin
-            if (fetch_en) begin
+            if (reset) begin
+                match_rd[i] <= 1'b0;
+            end
+            else if (fetch_en) begin
                 match_rd[i] <= (fetch_pc[31:2] == pc[i]) && valid[i];
             end
         end
