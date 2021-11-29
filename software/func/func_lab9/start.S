@@ -312,61 +312,52 @@ inst_test:
 ############################
 ###lab6 test
 #if lab6
-#bl n21_pcaddi_test    #pcaddi
-#bl idle_1s
-    
-    bl n22_pcaddu12i_test   #pcaddu12i
+    bl n21_pcaddu12i_test   #pcaddu12i
     bl idle_1s
     
-#bl n23_andn_test    #andn
-#bl idle_1s
-    
-    bl n24_slti_test   #slti
+    bl n22_slti_test   #slti
     bl idle_1s
     
-    bl n25_sltui_test  #sltui
+    bl n23_sltui_test  #sltui
     bl idle_1s
     
-    bl n26_andi_test   #andi
+    bl n24_andi_test   #andi
     bl idle_1s
     
-    bl n27_ori_test    #ori
+    bl n25_ori_test    #ori
     bl idle_1s
     
-    bl n28_xori_test   #xori
+    bl n26_xori_test   #xori
     bl idle_1s
     
-    bl n29_sll_w_test   #sll.w
+    bl n27_sll_w_test   #sll.w
     bl idle_1s
     
-    bl n30_sra_w_test   #sra.w
+    bl n28_sra_w_test   #sra.w
     bl idle_1s
     
-    bl n31_srl_w_test   #srl.w
+    bl n29_srl_w_test   #srl.w
     bl idle_1s
     
-    bl n32_div_w_test    #div.w
+    bl n30_div_w_test    #div.w
     bl idle_1s
     
-    bl n33_div_wu_test   #div.wu
+    bl n31_div_wu_test   #div.wu
     bl idle_1s
     
-    bl n34_mul_w_test   #mul.w
+    bl n32_mul_w_test   #mul.w
     bl idle_1s
     
-    bl n35_mulh_w_test  #mulh.w
+    bl n33_mulh_w_test  #mulh.w
     bl idle_1s
     
-    bl n36_mulh_wu_test   #mulh.wu
+    bl n34_mulh_wu_test   #mulh.wu
     bl idle_1s
     
-#bl n37_orn_test   #orn
-#bl idle_1s
-    
-    bl n38_mod_w_test   #mod.w
+    bl n35_mod_w_test   #mod.w
     bl idle_1s
     
-    bl n39_mod_wu_test   #mod.wu
+    bl n36_mod_wu_test   #mod.wu
     bl idle_1s
     
 #endif
@@ -374,34 +365,34 @@ inst_test:
 ############################
 ###lab7 test
 #if lab7
-    bl n40_blt_test          #blt
+    bl n37_blt_test          #blt
     bl idle_1s
     
-    bl n41_bge_test       #bge
+    bl n38_bge_test       #bge
     bl idle_1s
     
-    bl n42_bltu_test       #bltu
+    bl n39_bltu_test       #bltu
     bl idle_1s
     
-    bl n43_bgeu_test       #bgeu
+    bl n40_bgeu_test       #bgeu
     bl idle_1s
     
-    bl n44_ld_b_test       #ld.b
+    bl n41_ld_b_test       #ld.b
     bl idle_1s
     
-    bl n45_ld_h_test     #ld.h
+    bl n42_ld_h_test     #ld.h
     bl idle_1s
     
-    bl n46_ld_bu_test     #ld.bu
+    bl n43_ld_bu_test     #ld.bu
     bl idle_1s
     
-    bl n47_ld_hu_test       #ld.hu
+    bl n44_ld_hu_test       #ld.hu
     bl idle_1s
     
-    bl n48_st_b_test       #st.b
+    bl n45_st_b_test       #st.b
     bl idle_1s
     
-    bl n49_st_h_test    #st.h
+    bl n46_st_h_test    #st.h
     bl idle_1s
     
 #endif
@@ -417,7 +408,7 @@ lab8_csr_init:
     li t0, 0x1c008000 
     csrwr t0, csr_eentry 
 
-    bl n50_syscall_ex_test       #syscall
+    bl n47_syscall_ex_test       #syscall
     bl idle_1s
 #endif 
 ############################
@@ -438,50 +429,50 @@ lab9_csr_init:
     li t0, 0x1c008000 
     csrwr t0, csr_eentry 
 
-    bl n51_brk_ex_test         #brk ex 
+    bl n48_brk_ex_test         #brk ex 
     bl idle_1s 
 
-    bl n52_ti_ex_test          #timer int ex 
+    bl n49_ti_ex_test          #timer int ex 
     bl idle_1s 
 
 #ifndef ENABLE_TRACE
-    bl n53_ine_ex_test         #ine ex 
+    bl n50_ine_ex_test         #ine ex 
     bl idle_1s  
 #endif
 
 #ifndef ENABLE_TRACE
-    bl n54_soft_int_ex_test    #soft int ex 
+    bl n51_soft_int_ex_test    #soft int ex 
     bl idle_1s 
 #endif
 
-    bl n55_adef_ex_test         #adef ex 
+    bl n52_adef_ex_test         #adef ex 
     bl idle_1s  
 
-    bl n56_ale_ld_w_ex_test     #ld.w ale ex 
+    bl n53_ale_ld_w_ex_test     #ld.w ale ex 
     bl idle_1s 
 
-    bl n57_ale_ld_h_ex_test     #ld.h ale ex 
+    bl n54_ale_ld_h_ex_test     #ld.h ale ex 
     bl idle_1s 
 
-    bl n58_ale_ld_hu_ex_test    #ld.hu ale ex 
+    bl n55_ale_ld_hu_ex_test    #ld.hu ale ex 
     bl idle_1s 
     
-    bl n59_ale_st_h_ex_test      #st.h ale ex 
+    bl n56_ale_st_h_ex_test      #st.h ale ex 
     bl idle_1s 
 
-    bl n60_ale_st_w_ex_test      #st.w ale ex 
+    bl n57_ale_st_w_ex_test      #st.w ale ex 
     bl idle_1s 
 
-    bl n61_ti_ex_idle_test      #timer int ex with idle 
+    bl n58_ti_ex_idle_test      #timer int ex with idle 
     bl idle_1s  
 
 #ifndef ENABLE_TRACE
-    bl n62_rdcnt_test          #rdcntvl.w and rdcntvh.w test 
+    bl n59_rdcnt_test          #rdcntvl.w and rdcntvh.w test 
     bl idle_1s 
 #endif
 
 #ifndef ENABLE_TRACE
-    bl n63_atomic_ins_test      #ll.w and sc.w test 
+    bl n60_atomic_ins_test      #ll.w and sc.w test 
     bl idle_1s 
 #endif
 #endif

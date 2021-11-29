@@ -148,61 +148,52 @@ inst_test:
 ############################
 ###lab6 test
 #if lab6
-#bl n21_pcaddi_test    #pcaddi
-#bl idle_1s
-    
-    bl n22_pcaddu12i_test   #pcaddu12i
+    bl n21_pcaddu12i_test   #pcaddu12i
     bl idle_1s
     
-#bl n23_andn_test    #andn
-#bl idle_1s
-    
-    bl n24_slti_test   #slti
+    bl n22_slti_test   #slti
     bl idle_1s
     
-    bl n25_sltui_test  #sltui
+    bl n23_sltui_test  #sltui
     bl idle_1s
     
-    bl n26_andi_test   #andi
+    bl n24_andi_test   #andi
     bl idle_1s
     
-    bl n27_ori_test    #ori
+    bl n25_ori_test    #ori
     bl idle_1s
     
-    bl n28_xori_test   #xori
+    bl n26_xori_test   #xori
     bl idle_1s
     
-    bl n29_sll_w_test   #sll.w
+    bl n27_sll_w_test   #sll.w
     bl idle_1s
     
-    bl n30_sra_w_test   #sra.w
+    bl n28_sra_w_test   #sra.w
     bl idle_1s
     
-    bl n31_srl_w_test   #srl.w
+    bl n29_srl_w_test   #srl.w
     bl idle_1s
     
-    bl n32_div_w_test    #div.w
+    bl n30_div_w_test    #div.w
     bl idle_1s
     
-    bl n33_div_wu_test   #div.wu
+    bl n31_div_wu_test   #div.wu
     bl idle_1s
     
-    bl n34_mul_w_test   #mul.w
+    bl n32_mul_w_test   #mul.w
     bl idle_1s
     
-    bl n35_mulh_w_test  #mulh.w
+    bl n33_mulh_w_test  #mulh.w
     bl idle_1s
     
-    bl n36_mulh_wu_test   #mulh.wu
+    bl n34_mulh_wu_test   #mulh.wu
     bl idle_1s
     
-#bl n37_orn_test   #orn
-#bl idle_1s
-    
-    bl n38_mod_w_test   #mod.w
+    bl n35_mod_w_test   #mod.w
     bl idle_1s
     
-    bl n39_mod_wu_test   #mod.wu
+    bl n36_mod_wu_test   #mod.wu
     bl idle_1s
     
 #endif
