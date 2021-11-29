@@ -141,16 +141,43 @@ LEAF(n52_adef_ex_test)
 
 ###should not generate adef excp 
 ## 8
+  add.w   t2, ra, zero
+  li      t0, 0x9 
+  csrwr   t0, csr_dmw0
+
   li      t0, 0xd0010
   li      t1, 0x4c000020
   st.w    t1, t0, 0
+  nop
+  nop
+  nop
+  nop
+  nop
+  nop
+  nop
+  nop
+  nop
   jirl    ra, t0, 0
 
 ## 9
-  li      t0, 0xe0000000
+  li      t0, 0xa0000000
   li      t1, 0x4c000020  //write in "jirl zero, ra, 0" inst
   st.w    t1, t0, 0 
+  nop
+  nop
+  nop
+  nop
+  nop
+  nop
+  nop
+  nop
+  nop
   jirl    ra, t0, 0
+
+  li      t0, 0x19 
+  csrwr   t0, csr_dmw0
+
+  add.w   ra, t2, zero 
 
   li      t0, 0x0 
   li      t1, 0x3 

@@ -136,6 +136,9 @@ LEAF(n51_soft_int_ex_test)
   addi.w  t0, t0, -0x1 
   bne     t0, t1, 1b    //idle for interrupt
 
+  li      t0, 0x3 
+  csrxchg zero, t0, csr_estat
+
   li      t0, 0x0 
   li      t1, 0x3 
   csrxchg t0, t1, csr_crmd 
