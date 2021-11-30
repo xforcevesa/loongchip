@@ -100,8 +100,10 @@ wire        ms_br_pre_error;
 wire        ms_preld_inst;
 wire        ms_cacop;
 wire        ms_idle;
+wire [31:0] ms_error_va;
 
-assign {ms_idle          ,  //182:182
+assign {ms_error_va      ,  //214:183
+        ms_idle          ,  //182:182
         ms_cacop         ,  //181:181
         ms_preld_inst    ,  //180:180
         ms_br_pre_error  ,  //179:179
@@ -155,8 +157,6 @@ wire        dest_zero;
 wire [15:0] excp_num;
 wire        excp;
 
-wire [31:0] error_va;
-
 wire        excp_adem;
 wire        excp_tlbr;
 wire        excp_pil ;
@@ -185,7 +185,7 @@ assign ms_to_ws_bus = {ms_idle        ,  //217:217
                        data_tlb_index ,  //175:171
                        data_tlb_found ,  //170:170
                        ms_tlbsrch     ,  //169:169
-                       error_va       ,  //168:137
+                       ms_error_va    ,  //168:137
                        ms_sc_w        ,  //136:136
                        ms_ll_w        ,  //135:135
                        excp_num       ,  //134:119
@@ -256,8 +256,6 @@ assign ms_to_ds_forward_bus = {dep_need_stall,  //38:38
                                ms_final_result  //31:0
                               };
 
-assign error_va = ms_exe_result;
-
 //addr trans
 assign pg_mode = !csr_da && csr_pg;
 //uncache judgement
@@ -266,8 +264,8 @@ assign da_mode =  csr_da && !csr_pg;
 assign data_addr_trans_en = pg_mode && !dmw0_en && !dmw1_en && !cacop_op_mode_di;
 
 //addr dmw trans
-assign dmw0_en = ((csr_dmw0[`PLV0] && csr_plv == 2'd0) || (csr_dmw0[`PLV3] && csr_plv == 2'd3)) && (ms_exe_result[31:29] == csr_dmw0[`VSEG]);
-assign dmw1_en = ((csr_dmw1[`PLV0] && csr_plv == 2'd0) || (csr_dmw1[`PLV3] && csr_plv == 2'd3)) && (ms_exe_result[31:29] == csr_dmw1[`VSEG]);
+assign dmw0_en = ((csr_dmw0[`PLV0] && csr_plv == 2'd0) || (csr_dmw0[`PLV3] && csr_plv == 2'd3)) && (ms_error_va[31:29] == csr_dmw0[`VSEG]);
+assign dmw1_en = ((csr_dmw1[`PLV0] && csr_plv == 2'd0) || (csr_dmw1[`PLV3] && csr_plv == 2'd3)) && (ms_error_va[31:29] == csr_dmw1[`VSEG]);
 
 assign excp = excp_tlbr || excp_pil || excp_pis || excp_ppi || excp_pme || excp_adem || ms_excp;
 assign excp_num = {excp_pil, excp_pis, excp_ppi, excp_pme, excp_tlbr, excp_adem, ms_excp_num};
@@ -279,7 +277,7 @@ assign excp_pis  = ms_store_op && !data_tlb_v && data_addr_trans_en;
 assign excp_ppi  = access_mem && data_tlb_v && (csr_plv > data_tlb_plv) && data_addr_trans_en;
 assign excp_pme  = ms_store_op && data_tlb_v && (csr_plv <= data_tlb_plv) && !data_tlb_d && data_addr_trans_en;
 
-assign excp_adem = access_mem && ms_exe_result[31] && (csr_plv == 2'd3) && data_addr_trans_en;
+assign excp_adem = access_mem && ms_error_va[31] && (csr_plv == 2'd3) && data_addr_trans_en;
 
 assign tlb_excp_cancel_req = excp_tlbr || excp_pil || excp_pis || excp_ppi || excp_pme || excp_adem;
 

@@ -788,8 +788,8 @@ assign br_target = ({32{inst_beq || inst_bne || inst_bl || inst_b ||
 
 //assign idle_stall = inst_idle & ds_valid & !has_int;
 
-assign excp     = inst_syscall | inst_break | ds_excp | excp_ine | has_int;
-assign excp_num = {1'b0, excp_ine, inst_break, inst_syscall, ds_excp_num, has_int};
+assign excp     = excp_ipe | inst_syscall | inst_break | ds_excp | excp_ine | has_int;
+assign excp_num = {excp_ipe, excp_ine, inst_break, inst_syscall, ds_excp_num, has_int};
 
 assign rd_csr_addr = csr_idx;
 

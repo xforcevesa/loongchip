@@ -60,6 +60,8 @@ module exe_stage(
 reg         es_valid      ;
 wire        es_ready_go   ;
 
+wire [31:0] error_va      ;
+
 reg  [`DS_TO_ES_BUS_WD -1:0] ds_to_es_bus_r;
 wire [13:0] es_alu_op      ;
 wire        es_src1_is_pc  ;
@@ -109,8 +111,6 @@ wire        forward_enable ;
 wire        dest_zero      ;
 
 wire        excp_ale       ;
-//wire        excp_adem      ;
-//wire [31:0] error_va       ;
 
 wire        es_flush_sign  ;
 wire [ 3:0] wr_byte_en     ;
@@ -181,7 +181,8 @@ wire [31:0] es_alu_src2   ;
 wire [31:0] es_alu_result ;
 wire [31:0] exe_result    ;
 
-assign es_to_ms_bus = {es_idle          ,  //182:182
+assign es_to_ms_bus = {error_va         ,  //214:183
+                       es_idle          ,  //182:182
                        es_cacop         ,  //181:181
                        preld_inst       ,  //180:180
                        es_br_pre_error  ,  //179:179
@@ -272,6 +273,8 @@ assign tlb_inst_stall = (es_tlbsrch || es_tlbrd) && es_valid;
 //csr mask
 assign csr_mask_result = (es_rj_value & es_rkd_value) | (~es_rj_value & es_csr_data);
 assign es_csr_result   = es_csr_mask ? csr_mask_result : es_rkd_value;
+
+assign error_va        = pv_addr;
 
 //exception
 assign excp_ale        = access_mem & ((es_mem_size[0] &  1'b0)                                  | 
