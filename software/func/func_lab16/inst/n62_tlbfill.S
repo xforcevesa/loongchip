@@ -41,8 +41,6 @@ LEAF(n62_tlbfill_test)
 
     li     t1, 0x0
     beq    t5, t1, inst_error
-    li     t1, 0x1
-    beq    t5, t1, inst_error
 
 ###detect exception
     bne s2, zero, inst_error
