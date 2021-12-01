@@ -820,6 +820,7 @@
     csrwr   t0, csr_tcfg; \
     idle    0;            \
 1:;                       \
+    nop;                  \
     csrwr   zero, csr_tcfg 
 
 #define TEST_SOFT_INT_EX(estat_val) \
