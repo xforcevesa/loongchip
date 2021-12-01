@@ -80,8 +80,10 @@ LEAF(n74_dmw_test)
     ld.w    t0, t0, 0x0
     bne     t0, t3, inst_error
   
+    add.w   t2, ra, zero
     li      t0, 0xe0000000       //should not generate adef excp
-    jirl    ra, t0, 0
+    jirl    ra, t0, 0 
+    add.w   ra, t2, zero
 
     //let DA=0 and PG=1 and prl=3
     li      t0, 0x13

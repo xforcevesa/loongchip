@@ -97,6 +97,8 @@ test_finish:
     beq   t1, t0, tlb_adem_error
     li    t0, 0xe
     beq   t1, t0, tlb_adef_error
+    li    t0, 0xf 
+    beq   t1, t0, syscall_bak_admin_mode
 	b     test_end
 
 syscall_ex:
@@ -418,6 +420,14 @@ tlb_adef_error:
 #endif
     lu12i.w  s2, 0x80
     b        ex_finish  
+
+syscall_bak_admin_mode:
+    li       t0, 0x3 
+    csrxchg  t0, t0, csr_prmd 
+    csrrd    t1, csr_era 
+    addi.w   t1, t1, 0x4 
+    csrwr    t1, csr_era 
+    ertn
 
 .org TLBREBASE   //TLBREBASE
     add.w    s2, zero, zero
@@ -808,10 +818,8 @@ lab14_csr_init:
     bl n73_tlb_ex_test
     bl idle_1s 
 
-#if 0
     bl n74_dmw_test
     bl idle_1s
-#endif
 #endif 
 
 #if lab16 
