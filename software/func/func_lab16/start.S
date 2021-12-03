@@ -98,7 +98,7 @@ test_finish:
     li    t0, 0xe
     beq   t1, t0, tlb_adef_error
     li    t0, 0xf 
-    beq   t1, t0, syscall_bak_admin_mode
+    beq   t1, t0, syscall_bak_kernel_mode
 	b     test_end
 
 syscall_ex:
@@ -421,9 +421,9 @@ tlb_adef_error:
     lu12i.w  s2, 0x80
     b        ex_finish  
 
-syscall_bak_admin_mode:
+syscall_bak_kernel_mode:
     li       t0, 0x3 
-    csrxchg  t0, t0, csr_prmd 
+    csrxchg  zero, t0, csr_prmd 
     csrrd    t1, csr_era 
     addi.w   t1, t1, 0x4 
     csrwr    t1, csr_era 

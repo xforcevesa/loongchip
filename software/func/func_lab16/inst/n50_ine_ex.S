@@ -23,13 +23,21 @@ LEAF(n50_ine_ex_test)
   la.local  s4, 1f 
 1: 
   TEST_INE_EX(0x0) 
-  bne     s2, s7, inst_error 
+  bne     s2, s7, inst_error  
+  li      t0, 0xd0000 
+  li      s2, 0xf 
+  st.w    s2, t0, 0 
+  syscall 0          //return to kernel mode
   csrrd   t0, csr_crmd 
   li      t1, 0x7 
   and     t0, t0, t1 
-  li      t1, 0x3 
+  li      t1, 0x0
   bne     t1, t0, inst_error  
 
+  li      t5, 0   //used for verify prmd 
+  li      t0, 0xd0000 
+  li      s2, 0x3
+  st.w    s2, t0, 0
 //#ifndef ENABLE_TRACE
 ###2
   li      t7, 0xd0000
@@ -43,11 +51,6 @@ LEAF(n50_ine_ex_test)
   ld.w    t1, t7, 4 
   bne     t1, s4, inst_error
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
   li      s2, 0x3
   st.w    s2, t7, 0 
 
@@ -61,11 +64,6 @@ LEAF(n50_ine_ex_test)
   TEST_INE_EX(0xf9000000)
   beq     t8, t7, inst_error 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
 
 ###4
   li      s2, 0x03
@@ -74,11 +72,6 @@ LEAF(n50_ine_ex_test)
   TEST_INE_EX(0x887b8000)
   div.w   t0, t0, s0 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
 
 ###5
   li      s2, 0x03
@@ -90,11 +83,6 @@ LEAF(n50_ine_ex_test)
   TEST_INE_EX(0x88000200)
   beq     t8, t7, inst_error 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error  
 
 ###6 
   li      s2, 0x03 
@@ -103,11 +91,6 @@ LEAF(n50_ine_ex_test)
   TEST_INE_EX(0xf36e0000)
   mul.w   t0, t0, s0 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error  
 
 ###7
   li      s2, 0x03 
@@ -117,11 +100,6 @@ LEAF(n50_ine_ex_test)
   TEST_INE_EX(0x94080000)
   csrwr   t0, csr_era
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
 //#endif
 
   li      t0, 0x0 

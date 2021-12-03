@@ -55,7 +55,38 @@ LEAF(n74_dmw_test)
     csrwr t0, csr_tlbehi 
     csrwr t1, csr_tlbelo0 
     csrwr t2, csr_tlbelo1 
-    tlbwr
+    tlbwr  
+
+    li     t0, 0xd0000 
+    li     t1, 0xffffe000 
+    and    t4, t0, t1 
+    srli.w t4, t4, 0x4 
+    li     t1, 0x4f 
+    or     t1, t4, t1 
+    li     t2, 0x14f 
+    or     t2, t4, t2 
+    li     t3, 0x0c000002 
+    csrwr t3, csr_tlbidx 
+    csrwr t0, csr_tlbehi 
+    csrwr t1, csr_tlbelo0 
+    csrwr t2, csr_tlbelo1 
+    tlbwr   
+
+    li     t0, 0x1c008000 
+    li     t1, 0xffffe000
+    and    t4, t0, t1 
+    srli.w t4, t4, 0x4
+    li     t1, 0x4d
+    or     t1, t4, t1
+    li     t2, 0x14d
+    or     t2, t4, t2
+    li     t3, 0x0c000003
+    csrwr t3, csr_tlbidx 
+    csrwr t0, csr_tlbehi 
+    csrwr t1, csr_tlbelo0 
+    csrwr t2, csr_tlbelo1 
+    tlbwr  
+
     // config the TLB entry for ld
     #ifdef ENABLE_TRACE
     csrwr    zero, csr_tlbehi 
@@ -86,12 +117,19 @@ LEAF(n74_dmw_test)
     add.w   ra, t2, zero
 
     //let DA=0 and PG=1 and prl=3
-    li      t0, 0x13
-    li      t1, 0x1f
-    csrxchg t0, t1, csr_crmd 
+    //li      t0, 0x13
+    //li      t1, 0x1f
+    //csrxchg t0, t1, csr_crmd 
 
     li      t0, 0x40000000
     ld.w    t6, t0, 0x0
+
+    bne s2, zero, inst_error
+    li      t0, 0xd0000 
+    li      s2, 0xf 
+    st.w    s2, t0, 0 
+    syscall 0   //return to kernel mode 
+    li      s2, 0x0
 
     //let DA=1 and PG=0 and prl=0
     li      t0, 0x08

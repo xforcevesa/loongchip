@@ -23,14 +23,23 @@ LEAF(n52_adef_ex_test)
   TEST_ADEF(0x227f9789) 
   jirl    s5, s4, 0 
   add.w   zero, zero, zero
-  bne     s2, s7, inst_error 
+  bne     s2, s7, inst_error  
+  li      t0, 0xd0000 
+  li      s2, 0xf 
+  st.w    s2, t0, 0 
+  syscall 0    //return to kernel mode
   csrrd   t0, csr_badv 
   bne     a3, t0, inst_error  
   csrrd   t0, csr_crmd 
   li      t1, 0x7 
   and     t0, t0, t1 
-  li      t1, 0x3
+  li      t1, 0x0
   bne     t1, t0, inst_error  
+
+  li      t5, 0x0   //used for verify prmd 
+  li      t0, 0xd0000 
+  li      s2, 0x5 
+  st.w    s2, t0, 0  
 
 ###2
   li      t7, 0xd0000
@@ -47,11 +56,6 @@ LEAF(n52_adef_ex_test)
   bne     s2, s7, inst_error 
   csrrd   t0, csr_badv 
   bne     a3, t0, inst_error  
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
   li      s2, 0x5 
   st.w    s2, t7, 0 
 
@@ -68,11 +72,6 @@ LEAF(n52_adef_ex_test)
   bne     s2, s7, inst_error 
   csrrd   t0, csr_badv 
   bne     a3, t0, inst_error  
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error  
 
 ###4
   li      s2, 0x05
@@ -83,11 +82,6 @@ LEAF(n52_adef_ex_test)
   bne     s2, s7, inst_error 
   csrrd   t0, csr_badv 
   bne     a3, t0, inst_error  
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
 
 ###5
   li      s2, 0x05
@@ -102,11 +96,6 @@ LEAF(n52_adef_ex_test)
   bne     s2, s7, inst_error 
   csrrd   t0, csr_badv 
   bne     a3, t0, inst_error  
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error  
 
 ###6 
   li      s2, 0x05
@@ -117,11 +106,6 @@ LEAF(n52_adef_ex_test)
   bne     s2, s7, inst_error 
   csrrd   t0, csr_badv 
   bne     a3, t0, inst_error  
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error  
 
 ###7
   li      s2, 0x05
@@ -133,17 +117,15 @@ LEAF(n52_adef_ex_test)
   bne     s2, s7, inst_error 
   csrrd   t0, csr_badv 
   bne     a3, t0, inst_error  
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
 
 ###should not generate adef excp 
 ## 8
   add.w   t2, ra, zero
   li      t0, 0x9 
   csrwr   t0, csr_dmw0
+
+  li      t0, 0x3
+  csrxchg t0, t0, csr_crmd  //usr mode
 
   li      t0, 0xd0010
   li      t1, 0x4c000020
@@ -173,6 +155,11 @@ LEAF(n52_adef_ex_test)
   nop
   nop
   jirl    ra, t0, 0
+
+  li      t0, 0xd0000 
+  li      s2, 0xf 
+  st.w    s2, t0, 0 
+  syscall 0      //return to kernel mode
 
   li      t0, 0x19 
   csrwr   t0, csr_dmw0

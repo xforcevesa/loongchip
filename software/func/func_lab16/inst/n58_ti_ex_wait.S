@@ -11,12 +11,12 @@ LEAF(n58_ti_ex_idle_test)
   //clear ti
   li      t0, 0x1 
   csrwr   t0, csr_ticlr 
-  //init usr mode
-  li      t0, 0x3
+  //init kernel mode
+  li      t0, 0x0
   li      t1, 0x7 
   csrxchg t0, t1, csr_crmd 
   lu12i.w s7, 0x40 
-  li      t5, 0x7 //used for verify prmd  
+  li      t5, 0x4 //used for verify prmd  
   csrwr   zero, csr_tcfg
 
 ##inst test
@@ -27,7 +27,7 @@ LEAF(n58_ti_ex_idle_test)
   csrrd   t0, csr_crmd 
   li      t1, 0x7 
   and     t0, t0, t1 
-  li      t1, 0x7 
+  li      t1, 0x4 
   bne     t1, t0, inst_error 
 
 ###2
@@ -44,7 +44,7 @@ LEAF(n58_ti_ex_idle_test)
   csrrd   t0, csr_crmd 
   li      t1, 0x7 
   and     t0, t0, t1 
-  li      t1, 0x7 
+  li      t1, 0x4 
   bne     t1, t0, inst_error 
   li      s2, 0x4 
   st.w    s2, t7, 0
@@ -61,7 +61,7 @@ LEAF(n58_ti_ex_idle_test)
   csrrd   t0, csr_crmd 
   li      t1, 0x7 
   and     t0, t0, t1 
-  li      t1, 0x7 
+  li      t1, 0x4 
   bne     t1, t0, inst_error 
 
 ###4
@@ -70,11 +70,6 @@ LEAF(n58_ti_ex_idle_test)
   TEST_TI_EX_WAIT(0x0) 
   div.w   t0, t0, s0 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x7
-  bne     t1, t0, inst_error 
 
 ###5
   li      s2, 0x04
@@ -85,11 +80,6 @@ LEAF(n58_ti_ex_idle_test)
   TEST_TI_EX_WAIT(0x4) 
   beq     t8, t7, inst_error 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x7
-  bne     t1, t0, inst_error 
    
 ###6
   li      s2, 0x04
@@ -97,11 +87,6 @@ LEAF(n58_ti_ex_idle_test)
   TEST_TI_EX_WAIT(0x8) 
   mul.w   t0, t0, s0 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x7
-  bne     t1, t0, inst_error  
 
 ###7
   li      s2, 0x04
@@ -110,11 +95,6 @@ LEAF(n58_ti_ex_idle_test)
   TEST_TI_EX_WAIT(0x34) 
   csrwr   t0, csr_era
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x7
-  bne     t1, t0, inst_error 
 
   li      t0, 0x0 
   li      t1, 0x3 

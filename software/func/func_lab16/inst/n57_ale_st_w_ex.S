@@ -25,15 +25,24 @@ LEAF(n57_ale_st_w_ex_test)
 1: 
   st.w    a1, a0, 0x774
   bne     s2, s7, inst_error 
-  ld.w    t2, a0, 0x773 
-  bne     t2, t3, inst_error
+  ld.w    t2, a0, 0x773  
+  bne     t2, t3, inst_error 
+  li      t0, 0xd0000 
+  li      s2, 0xf 
+  st.w    s2, t0, 0 
+  syscall 0     //return to kernel mode
   csrrd   t0, csr_badv 
   bne     a3, t0, inst_error
   csrrd   t0, csr_crmd 
   li      t1, 0x7 
   and     t0, t0, t1 
-  li      t1, 0x3 
+  li      t1, 0x0 
   bne     t1, t0, inst_error  
+
+  li      t5, 0x0 //used for verify prmd 
+  li      t0, 0xd0000 
+  li      s2, 0x6 
+  st.w    s2, t0, 0
 
 ###2
   li      t7, 0xd0000
@@ -55,7 +64,7 @@ LEAF(n57_ale_st_w_ex_test)
   csrrd   t0, csr_crmd 
   li      t1, 0x7 
   and     t0, t0, t1 
-  li      t1, 0x3 
+  li      t1, 0x0 
   bne     t1, t0, inst_error 
   li      s2, 0x6 
   st.w    s2, t7, 0  
@@ -75,11 +84,6 @@ LEAF(n57_ale_st_w_ex_test)
   bne     t2, t3, inst_error
   csrrd   t0, csr_badv 
   bne     a3, t0, inst_error
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
 
 ###4
   li      s2, 0x06 
@@ -93,11 +97,6 @@ LEAF(n57_ale_st_w_ex_test)
   bne     t2, t3, inst_error
   csrrd   t0, csr_badv 
   bne     a3, t0, inst_error
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error  
 
 ###5
   li      s2, 0x06 
@@ -114,11 +113,6 @@ LEAF(n57_ale_st_w_ex_test)
   bne     t2, t3, inst_error 
   csrrd   t0, csr_badv 
   bne     a3, t0, inst_error
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
 
 ###6
   li      s2, 0x06 
@@ -132,11 +126,6 @@ LEAF(n57_ale_st_w_ex_test)
   bne     t2, t3, inst_error 
   csrrd   t0, csr_badv 
   bne     a3, t0, inst_error
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error  
 
 ###7
   li      s2, 0x06 
@@ -151,11 +140,6 @@ LEAF(n57_ale_st_w_ex_test)
   bne     t2, t3, inst_error 
   csrrd   t0, csr_badv 
   bne     a3, t0, inst_error
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error  
 
   li      t0, 0x0 
   li      t1, 0x3 

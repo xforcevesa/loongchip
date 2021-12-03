@@ -23,13 +23,21 @@ LEAF(n47_syscall_ex_test)
   la.local  s4, syscall_pc1
 syscall_pc1:
   syscall 0
-  bne     s2, s7, inst_error 
+  bne     s2, s7, inst_error  
+  li      t0, 0xd0000 
+  li      s2, 0xf 
+  st.w    s2, t0, 0 
+  syscall 0     //return to kernel mode
   csrrd   t0, csr_crmd 
   li      t1, 0x7 
   and     t0, t0, t1 
-  li      t1, 0x3 
+  li      t1, 0x0 
   bne     t1, t0, inst_error 
 
+  li      t5, 0x0 //used for verify prmd 
+  li      t0, 0xd0000 
+  li      s2, 0x1 
+  st.w    s2, t0, 0
 ###2
   li      t7, 0xd0000
   li      s2, 0x01 
@@ -42,11 +50,6 @@ syscall_pc2:
   ld.w    t1, t7, 4 
   bne     t1, s4, inst_error  
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
   li      s2, 0x1 
   st.w    s2, t7, 0
 
@@ -60,11 +63,6 @@ syscall_pc3:
   syscall 0
   beq     t8, t7, inst_error 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
 
 ###4
   li      s2, 0x01 
@@ -73,11 +71,6 @@ syscall_pc4:
   syscall 0
   div.w   t0, t0, s0 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
 
 ###5
   li      s2, 0x01 
@@ -89,11 +82,6 @@ syscall_pc5:
   syscall 0
   beq     t8, t7, inst_error 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
 
 ###6
   li      s2, 0x01 
@@ -102,11 +90,6 @@ syscall_pc6:
   syscall 0
   mul.w   t0, t0, s0 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error  
 
 ###7
   li      s2, 0x01 
@@ -114,13 +97,9 @@ syscall_pc6:
   csrwr   s2, csr_era
 syscall_pc7:
   syscall 0 
-  csrwr   t0, csr_era
+  csrwr   t0, csr_era 
+  csrrd   t1, csr_era
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x3 
-  bne     t1, t0, inst_error 
 
   li      t0, 0x0 
   li      t1, 0x3 

@@ -79,14 +79,13 @@ LEAF(n73_tlb_ex_test)
     la.local s4, 1f
 1:
     ld.w  t2, s8, 0x0
-    bne   s2, s7, inst_error
-    csrrd t0, csr_crmd
-    li    t1, 0x7
-    and   t0, t0, t1
-    bne   t5, t0, inst_error
+    bne   s2, s7, inst_error 
+    li    t0, 0xd0000 
+    li    s2, 0xf 
+    st.w  s2, t0, 0    
+    syscall 0   //return to kernel mode
 
 ### TLB page invalid error in ld
-
     
     //let DA=1 and PG=0 and prl=0
     li      t0, 0x08
@@ -113,11 +112,11 @@ LEAF(n73_tlb_ex_test)
     li    t0, 0xffffffff
 2:
     ld.w  t0, s8, 0x0
-    bne   s2, s7, inst_error
-    csrrd t0, csr_crmd
-    li    t1, 0x7
-    and   t0, t0, t1
-    bne   t5, t0, inst_error
+    bne   s2, s7, inst_error 
+    li    t0, 0xd0000 
+    li    s2, 0xf 
+    st.w  s2, t0, 0 
+    syscall 0    //return to kernel mode
 
 ### TLB page invalid error in st
     
@@ -146,11 +145,11 @@ LEAF(n73_tlb_ex_test)
     la.local s4, 3f
 3:
     st.w  t0, s8, 0x0
-    bne   s2, s7, inst_error
-    csrrd t0, csr_crmd
-    li    t1, 0x7
-    and   t0, t0, t1
-    bne   t5, t0, inst_error
+    bne   s2, s7, inst_error 
+    li    t0, 0xd0000 
+    li    s2, 0xf 
+    st.w  s2, t0, 0 
+    syscall 0   //return to kernel mode
 
 ### TLB privilage error
  
@@ -178,12 +177,12 @@ LEAF(n73_tlb_ex_test)
     li       t0, 0xfff
     la.local s4, 4f
 4:
-    st.w  t0, s8, 0x0
-    bne   s2, s7, inst_error
-    csrrd t0, csr_crmd
-    li    t1, 0x7
-    and   t0, t0, t1
-    bne   t5, t0, inst_error
+    st.w  t0, s8, 0x0 
+    bne   s2, s7, inst_error  
+    li    t0, 0xd0000 
+    li    s2, 0xf  
+    st.w  s2, t0, 0 
+    syscall 0   //return to kernel mode
 
 ### TLB page modified error
  
@@ -212,11 +211,11 @@ LEAF(n73_tlb_ex_test)
     la.local s4, 5f
 5:
     st.w  t0, s8, 0x0
-    bne   s2, s7, inst_error
-    csrrd t0, csr_crmd
-    li    t1, 0x7
-    and   t0, t0, t1
-    bne   t5, t0, inst_error
+    bne   s2, s7, inst_error 
+    li    t0, 0xd0000 
+    li    s2, 0xf 
+    st.w  s2, t0, 0 
+    syscall 0  // return to kernel mode
 
 ### TLB page invalid error in inst fetch
  
@@ -245,10 +244,10 @@ LEAF(n73_tlb_ex_test)
 6:
     jirl  zero, s8, 0x0
     bne   s2, s7, inst_error
-    csrrd t0, csr_crmd
-    li    t1, 0x7
-    and   t0, t0, t1
-    bne   t5, t0, inst_error
+    li    t0, 0xd0000 
+    li    s2, 0xf 
+    st.w  s2, t0, 0 
+    syscall 0  // return to kernel mode
 
 ### TLB address error in memory access: adem
     
@@ -279,11 +278,11 @@ LEAF(n73_tlb_ex_test)
     la.local s4, 7f
 7:
     ld.w  t0, s8, 0x0
-    bne   s2, s7, inst_error
-    csrrd t0, csr_crmd
-    li    t1, 0x7
-    and   t0, t0, t1
-    bne   t5, t0, inst_error
+    bne   s2, s7, inst_error 
+    li    t0, 0xd0000 
+    li    s2, 0xf 
+    st.w  s2, t0, 0 
+    syscall 0  // return to kernel mode
 
 
 ### TLB address error in inst fetch: adef
@@ -316,10 +315,10 @@ LEAF(n73_tlb_ex_test)
 8:
     jirl  zero, s8, 0x0
     bne   s2, s7, inst_error
-    csrrd t0, csr_crmd
-    li    t1, 0x7
-    and   t0, t0, t1
-    bne   t5, t0, inst_error
+    li    t0, 0xd0000 
+    li    s2, 0xf 
+    st.w  s2, t0, 0 
+    syscall 0  // return to kernel mode
 
 ###func end here and recover the DA=1
 

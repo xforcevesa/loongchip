@@ -11,12 +11,12 @@ LEAF(n51_soft_int_ex_test)
   //clear ti
   li      t0, 0x1 
   csrwr   t0, csr_ticlr 
-  //init usr mode
-  li      t0, 0x3
+  //init kernel mode
+  li      t0, 0x0
   li      t1, 0x7 
   csrxchg t0, t1, csr_crmd 
   lu12i.w s7, 0x40 
-  li      t5, 0x7 //used for verify prmd  
+  li      t5, 0x4 //used for verify prmd  
 
 ##inst test
 ###1  
@@ -26,7 +26,7 @@ LEAF(n51_soft_int_ex_test)
   csrrd   t0, csr_crmd 
   li      t1, 0x7 
   and     t0, t0, t1 
-  li      t1, 0x7 
+  li      t1, 0x4 
   bne     t1, t0, inst_error  
 
 ###2
@@ -43,7 +43,7 @@ LEAF(n51_soft_int_ex_test)
   csrrd   t0, csr_crmd 
   li      t1, 0x7 
   and     t0, t0, t1 
-  li      t1, 0x7 
+  li      t1, 0x4 
   bne     t1, t0, inst_error 
   li      s2, 0x4 
   st.w    s2, t7, 0
@@ -60,7 +60,7 @@ LEAF(n51_soft_int_ex_test)
   csrrd   t0, csr_crmd 
   li      t1, 0x7 
   and     t0, t0, t1 
-  li      t1, 0x7 
+  li      t1, 0x4 
   bne     t1, t0, inst_error 
 
 ###4
@@ -69,11 +69,6 @@ LEAF(n51_soft_int_ex_test)
   TEST_SOFT_INT_EX(0x2)
   div.w   t0, t0, s0 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x7
-  bne     t1, t0, inst_error 
 
 ###5
   li      s2, 0x04
@@ -84,11 +79,6 @@ LEAF(n51_soft_int_ex_test)
   TEST_SOFT_INT_EX(0x3)
   beq     t8, t7, inst_error 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x7
-  bne     t1, t0, inst_error 
 
 ###6
   li      s2, 0x04
@@ -96,11 +86,6 @@ LEAF(n51_soft_int_ex_test)
   TEST_SOFT_INT_EX(0x1fff)
   mul.w   t0, t0, s0 
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x7
-  bne     t1, t0, inst_error  
 
 ###7
   li      s2, 0x04
@@ -109,11 +94,6 @@ LEAF(n51_soft_int_ex_test)
   TEST_SOFT_INT_EX(0x1001)
   csrwr   t0, csr_era
   bne     s2, s7, inst_error 
-  csrrd   t0, csr_crmd 
-  li      t1, 0x7 
-  and     t0, t0, t1 
-  li      t1, 0x7
-  bne     t1, t0, inst_error 
 
 ###8
   li      t0, 0x0 
@@ -123,7 +103,7 @@ LEAF(n51_soft_int_ex_test)
   li      t0, 0xd0000 
   li      s2, 0xa 
   st.w    s2, t0, 0
-  li      t0, 0x7 
+  li      t0, 0x4 
   li      t1, 0x7 
   csrxchg t0, t1, csr_crmd 
   li      t0, 0x0 
