@@ -200,6 +200,10 @@ make tgt=rom
 当前内核及`pmon`仅适配`myCPU`处理器核。 
 
 ---
+### LA32-NEMU
+为帮助用户在仿真环境下调试内核，我们将会提供`difftest`环境，目前已完成[`NEMU`](https://gitee.com/wwt_panache/la32-nemu)的移植。
+
+---
 ### 工具下载链接
 http://114.242.206.180:24989/nextcloud/index.php/s/7xXTPkWg6Jn5KLW
 
