@@ -149,7 +149,46 @@ LEAF(n73_tlb_ex_test)
     li    t0, 0xd0000 
     li    s2, 0xf 
     st.w  s2, t0, 0 
-    syscall 0   //return to kernel mode
+    syscall 0   //return to kernel mode 
+
+### TLB PME 
+    //let DA=1 and PG=0 and prl=0 
+    li      t0, 0x08 
+    li      t1, 0x1f 
+    csrxchg t0, t1, csr_crmd  
+
+    li      t0, 0xd0000 
+    li      s2, 0x7 
+    st.w    s2, t0, 0  
+    
+    li      t0, 0xd0010 
+    li      s2, 0xff 
+    st.w    s2, t0, 0
+
+    ###fill in a present but not dirty TLB item 
+    FILL_TLB_ITEM(0x0c000000, 0x200ab<<13, 0x000d04d, 0x000d14d)
+    
+    //let DA=0 and PG=1 and prl=0 
+    li       t0, 0x10 
+    li       t1, 0x18 
+    csrxchg  t0, t1, csr_crmd
+
+    li       t5, 0x0 
+    lu12i.w  s7, 0x70 
+    li       s8, 0x200ab<<13 
+    addi.w   s8, s8, 0x10
+    li       t0, 0xfff  
+    la.local s4, 1f 
+1:
+    st.w     t0, s8, 0 
+    bne      s2, s7, inst_error 
+    li       t0, 0x08 
+    li       t1, 0x1f 
+    csrxchg  t0, t1, csr_crmd  
+    li       t0, 0xd0010 
+    ld.w     t1, t0, 0 
+    li       t2, 0xff 
+    bne      t2, t1, inst_error
 
 ### TLB privilage error
  

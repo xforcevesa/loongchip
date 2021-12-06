@@ -81,8 +81,8 @@ test_finish:
     beq   t1, t0, adef_ex     #adef 
     li    t0, 0x6 
     beq   t1, t0, ale_ex      #ale 
-#   li    t0, 0x7 
-#   beq   t1, t0, ipe_ex      #ipe
+    li    t0, 0x7 
+    beq   t1, t0, pme_ex      #pme
     li    t0, 0x8
     beq   t1, t0, ld_page_invalid
     li    t0, 0x9
@@ -237,6 +237,32 @@ ale_ex:
     lu12i.w  s2, 0x60 
     b        ex_finish  
     
+pme_ex:
+    add.w    s2, zero, zero 
+    csrrd    t0, csr_era 
+    bne      s4, t0, ex_finish 
+    csrrd    t0, csr_estat 
+    li       t1, 0x7fff0000 
+    and      t0, t0, t1 
+    li       t1, 0x00040000
+    csrrd    t0, csr_crmd 
+    li       t1, 0x7 
+    and      t0, t0, t1 
+    li       t1, 0x0 
+    bne      t1, t0, ex_finish
+    csrrd    t0, csr_prmd 
+    li       t1, 0x7 
+    and      t0, t0, t1 
+    bne      t0, t5, ex_finish 
+    csrrd    t0, csr_badv
+    bne      t0, s8, ex_finish 
+    srli.w   s8, s8, 13 
+    slli.w   s8, s8, 13
+    csrrd    t0, csr_tlbehi
+    bne      t0, s8, ex_finish
+    lu12i.w  s2, 0x70 
+    b        ex_finish  
+
 ld_page_invalid:
     add.w    s2, zero, zero
     csrrd    t0, csr_era 
