@@ -201,7 +201,7 @@ make tgt=rom
 
 ---
 ### LA32-NEMU
-为帮助用户在仿真环境下调试内核，我们将会提供`difftest`环境，目前已完成[`NEMU`](https://gitee.com/wwt_panache/la32-nemu)的移植。
+为帮助用户在仿真环境下调试内核，我们将会提供`difftest`环境，目前已完成[NEMU](https://gitee.com/wwt_panache/la32-nemu)的移植。
 
 ---
 ### 工具下载链接
