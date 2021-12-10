@@ -137,7 +137,7 @@ generate
                 match_rd[i] <= 1'b0;
             end
             else if (fetch_en) begin
-                match_rd[i] <= (fetch_pc[31:2] == pc[i]) && valid[i];
+                match_rd[i] <= (fetch_pc[31:2] == pc[i]) && valid[i] && !(jirl_flag[i] && ras_empty);
             end
         end
         end
