@@ -128,6 +128,8 @@ assign {ws_idle        ,  //217:217
         ws_pc             //31:0
        } = ms_to_ws_bus_r;
 
+assign ws_to_ds_valid = ws_valid;
+
 assign flush_sign = excp_flush || ertn_flush || refetch_flush || icacop_flush || idle_flush;
 
 wire        rf_we;

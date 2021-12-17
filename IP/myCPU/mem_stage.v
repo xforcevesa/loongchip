@@ -200,6 +200,8 @@ assign ms_to_ws_bus = {ms_idle        ,  //217:217
                        ms_pc             //31:0
                       };
 
+assign ms_to_ds_valid = ms_valid;
+
 //cache inst need wait data_data_ok signal
 assign ms_ready_go    = (data_data_ok || data_buff_enable) || !access_mem || excp;
 assign ms_allowin     = !ms_valid || ms_ready_go && ws_allowin;

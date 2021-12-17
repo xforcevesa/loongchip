@@ -217,6 +217,8 @@ assign es_to_ms_bus = {error_va         ,  //214:183
                        es_pc               //31:0
                       };
 
+assign es_to_ds_valid = es_valid;
+
 assign access_mem = es_load_op || es_store_op;
 
 assign es_flush_sign  = excp_flush || ertn_flush || refetch_flush || icacop_flush || idle_flush;
