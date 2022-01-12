@@ -104,6 +104,12 @@ module simu_top
 
     ,
 
+    output [31:0] num_data,
+    output        open_trace,
+    output        num_monitor,       
+    output [ 7:0] confreg_uart_data,
+    output        write_uart_valid,
+
 	output	   [127:0] uart_ctr_bus,
 
     inout             uart_rx,
@@ -121,6 +127,13 @@ module simu_top
 
 
 );
+
+assign num_data          = soc.confreg.num_data         ; 
+assign open_trace        = soc.confreg.open_trace       ; 
+assign num_monitor       = soc.confreg.num_monitor      ;
+assign confreg_uart_data = soc.confreg.confreg_uart_data;
+assign write_uart_valid  = soc.confreg.write_uart_valid ;
+
 soc_top #(
     .BUS_WIDTH(BUS_WIDTH),
     .DATA_WIDTH(DATA_WIDTH), 

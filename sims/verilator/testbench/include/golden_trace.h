@@ -5,12 +5,12 @@
 #include <cstring>
 #include <string>
 
-#define CONFREG_NUM_REG         top->simu_top__DOT__soc__DOT__confreg__DOT__num_data
-#define CONFREG_OPEN_TRACE      top->simu_top__DOT__soc__DOT__confreg__DOT__open_trace
-#define CONFREG_NUM_MONITOR     top->simu_top__DOT__soc__DOT__confreg__DOT__num_monitor
-//#define CONFREG_UART_DISPLAY    top->simu_top__DOT__soc__DOT__confreg__DOT__confreg_uart_valid
-#define CONFREG_UART_DATA       top->simu_top__DOT__soc__DOT__confreg__DOT__confreg_uart_data  
-#define CONFREG_UART_DISPLAY    top->simu_top__DOT__soc__DOT__confreg__DOT__write_uart_valid  
+#define CONFREG_NUM_REG         top->num_data
+#define CONFREG_OPEN_TRACE      top->open_trace
+#define CONFREG_NUM_MONITOR     top->num_monitor
+//#define CONFREG_UART_DISPLAY  top->confreg_uart_valid
+#define CONFREG_UART_DATA       top->confreg_uart_data  
+#define CONFREG_UART_DISPLAY    top->write_uart_valid  
 #ifdef RUN_FUNC
 #define END_PC 0x1c000100 
 #elif defined RUN_C
