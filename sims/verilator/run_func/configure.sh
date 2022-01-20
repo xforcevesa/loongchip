@@ -25,8 +25,10 @@ echo "  --disable-clk-time    	disable print [*ns] info in simu_trace.txt(defaul
 echo "  --output-pc-info      	output pc info to terminal(default, can only output one info)
      "
 echo "  --output-uart-info		output uart info to terminal 
+     "
+echo "  --output-nothing              output nothing to terminal
 
-     " 
+     "
 echo "  --threads num         	run simulation in num threads(default: disable multithread) 
 
      "
@@ -65,7 +67,7 @@ TRACE_COMP=y
 RUN_FUNC=n
 RUN_C=n 
 OUTPUT_PC_INFO=y
-OUTPUT_UART_INFO=n
+OUTPUT_UART_INFO=n 
 READ_MISS_CHECK=y
 RESET_VAL=0 
 RESET_SEED=1997
@@ -84,7 +86,7 @@ TRACE_TAIL_SIZE=100000
 CONFIG_LOG="./configure.sh"
 
 #get opt 
-TEMP=`getopt -o h -a -l run:,threads:,reset-val:,reset-random-seed:,waveform-slice-size:,trace-slice-size:,waveform-tail-size:,trace-tail-size:,disable-trace-comp,help,output-pc-info,output-uart-info,disable-read-miss,disable-clk-time,dump-vcd,dump-fst,slice-waveform,disable-simu-trace,slice-simu-trace,tail-waveform,tail-simu-trace -n "$0" -- "$@"`  
+TEMP=`getopt -o h -a -l run:,threads:,reset-val:,reset-random-seed:,waveform-slice-size:,trace-slice-size:,waveform-tail-size:,trace-tail-size:,disable-trace-comp,help,output-pc-info,output-uart-info,output-nothing,disable-read-miss,disable-clk-time,dump-vcd,dump-fst,slice-waveform,disable-simu-trace,slice-simu-trace,tail-waveform,tail-simu-trace -n "$0" -- "$@"`  
 
 if [ $? != 0 ]
 then 
@@ -129,6 +131,11 @@ do
         -output-uart-info|--output-uart-info) 
             OUTPUT_UART_INFO=y 
             OUTPUT_PC_INFO=n
+            CONFIG_LOG="$CONFIG_LOG $1"
+            shift ;;
+        -output-nothing|--output-nothing)
+            OUTPUT_UART_INFO=n 
+            OUTPUT_PC_INFO=n 
             CONFIG_LOG="$CONFIG_LOG $1"
             shift ;;
         -disable-read-miss|--disable-read-miss)
