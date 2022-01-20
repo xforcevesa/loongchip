@@ -41,7 +41,7 @@ empty=
 space=${empty} 
 soft_list=$(subst ${comma},${space},${RUN_SOFTWARE})
 
-all:func
+all:env_test func 
 func:compile 
 	+make soft 
 	+make run
@@ -196,6 +196,14 @@ golden_trace_list_tmp_3 = $(foreach soft, ${golden_trace_list_tmp_2}, ${subst _l
 golden_trace_list = $(filter-out $(golden_trace_list_tmp_3), $(soft_list))
 
 
+env_test: guard-CHIPLAB_HOME 
+	@echo "CHIPLAB_HOME=${CHIPLAB_HOME}"
+
+guard-%:
+	@ if [ "${${*}}" = "" ]; then \
+		echo "Environment variable $* not set"; \
+		exit 1; \
+	fi
 
 verilator:${VERILATOR_SRC} 
 	@echo "============================================================================================================="
