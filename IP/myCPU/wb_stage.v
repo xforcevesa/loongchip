@@ -172,7 +172,7 @@ assign excp_flush   = ws_excp & ws_valid;
 assign ertn_flush   = ws_ertn & ws_valid;
 assign refetch_flush = (ws_csr_we || ((ws_ll_w || ws_sc_w) && !ws_excp) || ws_refetch) && ws_valid;
 assign csr_era      = ws_pc;
-assign csr_wr_en    = ws_csr_we && ws_valid;
+assign csr_wr_en    = ws_csr_we && real_valid;
 assign wr_csr_addr  = ws_csr_idx;
 assign wr_csr_data  = ws_csr_result; 
 
