@@ -6,6 +6,16 @@
 	- `AXI128` : `AXI`选项都置为`n`表示`AXI32`
 	- `CPU_2CMT` : 双发射    
 
+## Quick Start
+一下为一个简单的仿真例程，方便用户快速上手仿真过程。在进行仿真之前，用户需安装好verilator、gtkware以及qemu。
+```
+cd $CHIPLAB_HOME/sims/verilator/run_func #进入func仿真目录中
+./configure.sh --run func/func_lab3      #以仿真运行的程序func_lab3为例子生成对应的Makefile
+make                                     #开始编译。若没有编译出错，会自动进行仿真。
+cd $CHIPLAB_HOME/sims/verilator/run_func/log/func/func_lab3_log
+gtkwave simu_trace.vcd                   #查看仿真波形
+```
+上述简单仿真过程完成之后，用户可根据自己的需要，配置相应的仿真参数。对于仿真参数的说明，请参考以下章节。
 ## func环境
 ### 编译参数配置
 ```
