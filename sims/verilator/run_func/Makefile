@@ -115,6 +115,10 @@ ifeq ('${SIMU_TRACE}', 'y')
 CFLAGS += -DSIMU_TRACE 
 endif 
 
+ifeq ('${MEM_TRACE}', 'y')
+CFLAGS += -DMEM_TRACE 
+endif 
+
 ifeq ('${OUTPUT_PC_INFO}', 'y')
 CFLAGS += -DOUTPUT_PC_INFO
 endif
@@ -276,6 +280,7 @@ ifeq ('${TRACE_COMP}', 'y')
 	mv ./tmp/simu_trace.txt* ./log/$${soft}_log/;	\
 	mv ./tmp/uart_output.txt ./log/$${soft}_log/;	\
 	mv ./tmp/uart_output.txt.real ./log/$${soft}_log/;	\
+	mv ./tmp/mem_trace.txt ./log/$${soft}_log/;         \
 	mv ./tmp/logs/*.${WAVEFILE} ./log/$${soft}_log/;	\
 	rm -rf ./tmp;    \
 	done 
@@ -291,6 +296,7 @@ else
 	mv ./tmp/simu_trace.txt* ./log/$${soft}_log/;	\
 	mv ./tmp/uart_output.txt ./log/$${soft}_log/;	\
 	mv ./tmp/uart_output.txt.real ./log/$${soft}_log/;	\
+	mv ./tmp/mem_trace.txt ./log/$${soft}_log/;         \
 	mv ./tmp/logs/*.${WAVEFILE} ./log/$${soft}_log/;	\
 	rm -rf ./tmp; \
 	done 

@@ -58,6 +58,7 @@ public:
     const static char* rf_trace_ifile;
     const static char* rf_trace_ofile;
     const static char* simu_trace_file;
+    const static char* mem_trace_file;
     const static char* uart_output_file;
     const static char* golden_trace_file;
     CpuTool(Vtop* top){this->top = top;}
@@ -104,6 +105,7 @@ public:
             PARSE_STR (rf_trace_ifile,"--rf-trace-i")
 
             PARSE_STR (simu_trace_file,"--simu_trace")
+            PARSE_STR (mem_trace_file, "--mem_trace")
             PARSE_STR (uart_output_file, "--uart_output")
             PARSE_STR (golden_trace_file,"--golden_trace") 
 
@@ -150,6 +152,7 @@ const char ram_file_default[] = "ram.dat";
 const char rand_path_default[] = "RES/res2020_mulh_0/";
 const char result_flag_path_default[] = "RES/result_flag.txt";
 const char simu_trace_file_default[] = "./simu_trace.txt";
+const char mem_trace_file_default[] = "./mem_trace.txt";
 const char golden_trace_file_default[] = "./golden_trace.txt";
 const char uart_output_file_default[] = "./uart_output.txt";
 const char null_file[] = " ";
@@ -157,6 +160,7 @@ const char* CpuTool::ram_file = ram_file_default;
 const char* CpuTool::rand_path = rand_path_default;
 const char* CpuTool::result_flag_path = result_flag_path_default;
 const char* CpuTool::simu_trace_file = simu_trace_file_default;
+const char* CpuTool::mem_trace_file = mem_trace_file_default;
 const char* CpuTool::uart_output_file = uart_output_file_default;
 const char* CpuTool::golden_trace_file = golden_trace_file_default;
 const char* CpuTool::ram_save_bp_file = null_file;

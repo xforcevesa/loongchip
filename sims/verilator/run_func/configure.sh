@@ -16,6 +16,8 @@ echo "  --disable-trace-comp  	disable trace compare in simulation(default: enab
      " 
 echo "  --disable-simu-trace  	disable print inst info to simu_trace.txt(default: enable)
 	 "
+echo "  --enable-mem-trace            enable print mem info to mem_trace.txt(default: disable)
+	 "
 echo "  --disable-read-miss   	disable read miss check. when core read uninited mem address, 
                         	\"read miss 0x*\" info will be output to terminal(default: enable)
      " 
@@ -79,6 +81,7 @@ WAVEFORM_SLICE_SIZE=10000
 SLICE_SIMU_TRACE=n
 TRACE_SLICE_SIZE=100000
 SIMU_TRACE=y 
+MEM_TRACE=n
 TAIL_WAVEFORM=n
 WAVEFORM_TAIL_SIZE=10000
 TAIL_SIMU_TRACE=n
@@ -86,7 +89,7 @@ TRACE_TAIL_SIZE=100000
 CONFIG_LOG="./configure.sh"
 
 #get opt 
-TEMP=`getopt -o h -a -l run:,threads:,reset-val:,reset-random-seed:,waveform-slice-size:,trace-slice-size:,waveform-tail-size:,trace-tail-size:,disable-trace-comp,help,output-pc-info,output-uart-info,output-nothing,disable-read-miss,disable-clk-time,dump-vcd,dump-fst,slice-waveform,disable-simu-trace,slice-simu-trace,tail-waveform,tail-simu-trace -n "$0" -- "$@"`  
+TEMP=`getopt -o h -a -l run:,threads:,reset-val:,reset-random-seed:,waveform-slice-size:,trace-slice-size:,waveform-tail-size:,trace-tail-size:,disable-trace-comp,help,output-pc-info,output-uart-info,output-nothing,disable-read-miss,disable-clk-time,dump-vcd,dump-fst,slice-waveform,disable-simu-trace,enable-mem-trace,slice-simu-trace,tail-waveform,tail-simu-trace -n "$0" -- "$@"`  
 
 if [ $? != 0 ]
 then 
@@ -121,6 +124,10 @@ do
             shift ;; 
         -disable-simu-trace|--disable-simu-trace)
             SIMU_TRACE=n 
+            CONFIG_LOG="$CONFIG_LOG $1"
+            shift ;; 
+        -enable-mem-trace|--enable-mem-trace)
+            MEM_TRACE=y
             CONFIG_LOG="$CONFIG_LOG $1"
             shift ;; 
         -output-pc-info|--output-pc-info) 
@@ -303,6 +310,7 @@ fi
 echo "RUN_SOFTWARE=$RUN_SOFTWARE" >> $CONFIG_SOFT 
 echo "TRACE_COMP=$TRACE_COMP" >> $CONFIG_SOFT 
 echo "SIMU_TRACE=$SIMU_TRACE" >> $CONFIG_SOFT 
+echo "MEM_TRACE=$MEM_TRACE" >> $CONFIG_SOFT
 echo "RUN_FUNC=$RUN_FUNC" >> $CONFIG_SOFT 
 echo "RUN_C=$RUN_C" >> $CONFIG_SOFT 
 echo "OUTPUT_PC_INFO=$OUTPUT_PC_INFO" >> $CONFIG_SOFT 

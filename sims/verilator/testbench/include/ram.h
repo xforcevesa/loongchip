@@ -17,6 +17,8 @@ public:
 class CpuRam:CpuTool
 {
 public:
+    FILE* mem_out;
+    char mem_out_path[128];
     static const int tbwd = 8;
     static const int pgwd = 20;
     static const int tbsz = 1<<tbwd;
@@ -27,6 +29,7 @@ public:
     Rand64* rand64;
     CpuDevices dev;
 
+    bool ram_read_mark = false;
     int debug = 0;
 
     int dead_clk = 0;
@@ -89,8 +92,14 @@ public:
             cur[idx] = mem[idx].begin() + k;
         }
     }
-    CpuRam(Vtop* top,Rand64* rand64,vluint64_t main_time,struct UART_STA *uart_status):CpuTool(top)
+    CpuRam(Vtop* top,Rand64* rand64,vluint64_t main_time,struct UART_STA *uart_status,const char*mem_path):CpuTool(top)
     {
+        sprintf(mem_out_path, "./%s", mem_path);
+        if ((mem_out = fopen(mem_out_path, "w")) == NULL) {
+            printf("mem_trace.txt open error!!!!\n");
+            fprintf(mem_out, "mem_trace.txt open error!!!!\n");
+            exit(0);
+        }
         this->rand64 = rand64;
 		if (restore_bp_time != 0) {
 			breakpoint_restore(main_time, ram_restore_bp_file, uart_status);
@@ -167,6 +176,9 @@ public:
         return data;
     }
     ~CpuRam(){
+        if (mem_out) {
+            fclose(mem_out);
+        }
         for(int idx=0;idx<tbsz;idx+=1){
             vector<RamSection>::iterator e = mem[idx].end();
             for(vector<RamSection>::iterator j = mem[idx].begin();j!=e;j+=1){
@@ -258,15 +270,44 @@ public:
             if (!special_read()) {
                 process_read(main_time,read_addr,top->ram_rdata);
             }
+            read_valid = 0;
         }
-        #else
-        process_read(main_time,read_addr,top->ram_rdata);
+        #else 
+        if (read_valid){
+            process_read(main_time,read_addr,top->ram_rdata);
+            read_valid = 0;
+        }
+        #endif
+        #ifdef MEM_TRACE
+        if (ram_read_mark) {
+           fprintf(mem_out, "[%010dns] mem rd: pc = %08x, addr = %08x, data = %08x\n", main_time, top->debug0_wb_pc, read_addr, top->ram_rdata);
+           ram_read_mark = false;
+        }
         #endif
         
         read_valid = top->ram_ren;
-        if(read_valid)read_addr  = top->ram_raddr;
+        if(read_valid){
+            if ((top->ram_raddr & 0xff000000) == 0x1c000000) {
+                read_addr = (top->ram_raddr);
+            }
+            else 
+                #ifdef RUN_FUNC
+                read_addr  = (top->ram_raddr);
+                #else
+                read_addr  = (top->ram_raddr&0x07ffffff);
+                #endif
+            ram_read_mark = true;
+        }
         if(top->ram_wen){
-            return process_write(main_time,top->ram_waddr,top->ram_wen,top->ram_wdata);
+            #ifdef MEM_TRACE
+            fprintf(mem_out, "[%010dns] mem wr: pc = %08x, addr = %08x, data = %08x\n", main_time, top->debug0_wb_pc, top->ram_waddr&0x7ffffff, top->ram_wdata);
+            #endif 
+            #ifdef RUN_FUNC
+            return process_write(main_time,(top->ram_waddr),top->ram_wen,top->ram_wdata);
+            #else
+            return process_write(main_time,(top->ram_waddr&0x7ffffff),top->ram_wen,top->ram_wdata);
+            #endif
+            //return process_write(main_time,(top->ram_waddr),top->ram_wen,top->ram_wdata);
             //return process_write128(main_time,top->ram_waddr&~0xf,top->ram_wen,top->ram_wdata);
         }
         return 0;

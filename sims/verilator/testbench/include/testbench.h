@@ -71,7 +71,7 @@ public:
 				printf("Warning: restore_bp_time is not equal with %s's main_time\n", top_restore_bp_file);
 			}
 		}
-        ram     = new CpuRam(top,rand64,*main_time,&uart_status);
+        ram     = new CpuRam(top,rand64,*main_time,&uart_status,mem_trace_file);
 		if (restore_bp_time != 0){
 			uart_config = uart_status.uart_config;
 			uart_div_set = uart_status.uart_div_set;
