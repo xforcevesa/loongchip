@@ -854,7 +854,7 @@ end
 //assign wr_addr_hit[1] = axi_s_awaddr[31:20]==12'h1fc ||
 //                        axi_s_awaddr[31:16]==16'h1fe8;  //SPI
 assign wr_addr_hit[1] = 1'b0;
-assign wr_addr_hit[2] = axi_s_awaddr[31:16]==16'hbfe0;
+assign wr_addr_hit[2] = axi_s_awaddr[31:16]==16'h1fe0;
                         //axi_s_awaddr[31:16]==16'h1fe7 ; //APB: uart and nand
 assign wr_addr_hit[3] = axi_s_awaddr[28:16]==16'h1faf;  //CONF
 //assign wr_addr_hit[4] = axi_s_awaddr[31:16]==16'h1ff0;  //MAC
@@ -947,7 +947,7 @@ end
 
 //assign rd_addr_hit[1] = ((axi_s_araddr[31:16]) ==16'h1fe8) || ((axi_s_araddr[31:20])==12'h1fc);  //SPI
 assign rd_addr_hit[1] = 1'b0;
-assign rd_addr_hit[2] = (axi_s_araddr[31:16]) ==16'hbfe0;
+assign rd_addr_hit[2] = (axi_s_araddr[31:16]) ==16'h1fe0;
                         //(axi_s_araddr[31:16]) ==16'h1fe0;  //APB:uart and nand
 assign rd_addr_hit[3] = (axi_s_araddr[28:16]) ==16'h1faf;  //CONF
 //assign rd_addr_hit[4] = (axi_s_araddr[31:16]) == 16'h1ff0; //MAC
