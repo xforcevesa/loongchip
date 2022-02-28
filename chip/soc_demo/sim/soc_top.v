@@ -302,7 +302,7 @@ wire [7  :0] interrupt  ;
 wire         reset      ;
 wire         timer_clk  ;
 
-assign interrupt = {7'b0, uart0_int};
+assign interrupt = {6'b0, uart0_int, 1'b0};
 assign reset     = !aresetn;
 assign timer_clk = aclk;
 
