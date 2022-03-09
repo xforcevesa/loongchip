@@ -2,7 +2,7 @@
 .text
 _boot:
 #init_uart
-li       t1, 0xbfe001e0 
+li       t1, 0x1fe001e0 
 #WRITE(line,OFS_FIFO,FIFO_ENABLE|FIFO_RCV_RST|FIFO_XMT_RST|FIFO_TRIGGER_4);
 li       t2, 0x47   
 st.b     t2, t1, 2
@@ -91,7 +91,7 @@ csrxchg $r12, $r13, 0x0
 li      $r12, KERNEL_ENTRY_ADDRESS 
 li      $r4 , 0x00000002
 li      $r5 , 0xa5f00000
-li      $r6 , 0xa5f00040
+li      $r6 , 0xa5f00080
 jirl    $r0, $r12, 0     #jump to kernel entry 
 
 print_char:
