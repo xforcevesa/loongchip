@@ -62,7 +62,7 @@ chiplab项目致力于构建基于loongarch primary的soc敏捷开发平台。�
 #sudo apt-get install libfl2  # Ubuntu only (ignore if gives error)    
 #sudo apt-get install libfl-dev  # Ubuntu only (ignore if gives error)    
 git clone https://gitee.com/mirrors/Verilator.git
-git checkout v4.108
+git checkout v4.216
 # Every time you need to build:
 unsetenv VERILATOR_ROOT  # For csh; ignore error if on bash
 unset VERILATOR_ROOT  # For bash
