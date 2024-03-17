@@ -1,7 +1,21 @@
-# Chiplab用户手册 
-## 前言
-chiplab项目致力于构建基于LoongArch32 Reduced的soc敏捷开发平台。如发现问题请在issues提出。
+# loongchip
 
-详细介绍请参考[CHIPLAB使用介绍](https://chiplab.readthedocs.io/)
-### 交流群
- [slack交流群](https://join.slack.com/t/chiplabworkspace/shared_invite/zt-v1927dwg-qqnHNTcAeko7QsUsdCRoPA)
+An implementation of LoongArch32 Reduced architecture using verilog and verilator with 5-stage pipeline, inherited from [chiplab](https://gitee.com/loongson-edu/chiplab). 
+
+IPC is as low as around 0.207, thus awaiting for further optimization.
+
+## Runing Step
+
+Providing you're to run the simulation, see the following if you've changed your work directory to the root of this project.
+
+```bash
+export CHIPLAB_HOME=$(pwd)
+cd $CHIPLAB_HOME/sims/verilator/run_prog
+# One example in the software directory
+./configure.sh --run linux
+make -j$(nproc)
+```
+
+## Documentation
+
+Inherited. TODO.

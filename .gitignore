@@ -2,7 +2,7 @@ output
 obj_dir
 log
 obj
-config-generator.mak 
+*.mak 
 config.log
 tmp
 *.o
