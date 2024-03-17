@@ -10,6 +10,8 @@
 `define PIE       2
 //ECTL
 `define LIE       12:0
+`define LIE_1     9:0
+`define LIE_2     12:11
 //ESTAT
 `define IS        12:0
 `define ECODE     21:16
@@ -60,7 +62,6 @@
 `define ECODE_PME  6'h4
 `define ECODE_PPI  6'h7
 `define ECODE_ADEF 6'h8
-`define ECODE_ADEM 6'h8
 `define ECODE_ALE  6'h9
 `define ECODE_SYS  6'hb
 `define ECODE_BRK  6'hc
@@ -70,4 +71,3 @@
 `define ECODE_TLBR 6'h3f
 
 `define ESUBCODE_ADEF  9'h0
-`define ESUBCODE_ADEM  9'h1

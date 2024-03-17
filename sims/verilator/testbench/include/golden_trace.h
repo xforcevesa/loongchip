@@ -1,4 +1,8 @@
+#ifndef CHIPLAB_GOLDEN_TRACE_H
+#define CHIPLAB_GOLDEN_TRACE_H
+
 #include "common.h"
+#include "cpu_tool.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -73,7 +77,7 @@ class GoldenTrace:CpuTool
 
         sprintf(uart_out_path, "./%s%s",path,uart_path);
         if ((uart_out = fopen(uart_out_path, "w")) == NULL) {
-        //if ((uart_out = fopen("/media/dashuai/E266FD5F66FD34BF/loongson/work/chiplab_alpha/chiplab/sims/verilator/run_func/uart.txt", "w")) == NULL) {
+        //if ((uart_out = fopen("/media/dashuai/E266FD5F66FD34BF/loongson/work/chiplab_alpha/chiplab/sims/verilator/run_prog/uart.txt", "w")) == NULL) {
             printf("uart.txt open error!!!!\n");
             fprintf(trace_out, "uart.txt open error!!!!\n");
             exit(0);
@@ -505,3 +509,5 @@ class GoldenTrace:CpuTool
 
     }
 };
+
+#endif  // CHIPLAB_GOLDEN_TRACE_H

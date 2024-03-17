@@ -10,6 +10,10 @@ module regfile(
     input         we,       //write enable, HIGH valid
     input  [ 4:0] waddr,
     input  [31:0] wdata
+    `ifdef DIFFTEST_EN
+    ,
+    output [31:0] rf_o [31:0]   // difftest
+    `endif 
 );
 reg [31:0] rf[31:0];
 
@@ -27,5 +31,9 @@ assign rdata1 = (raddr1==5'b0) ? 32'b0  :
 assign rdata2 = (raddr2==5'b0) ? 32'b0 : 
                 ((raddr2==waddr) && we) ? wdata :
                                           rf[raddr2];
+// difftest
+`ifdef DIFFTEST_EN
+assign rf_o = rf;
+`endif
 
 endmodule

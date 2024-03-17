@@ -54,11 +54,29 @@ module wb_stage(
     output        real_mem_inst                    ,
     output        real_br_pre                      ,
     output        real_br_pre_error                ,
+    //debug
+    output        debug_ws_valid                     ,
+    input         debug_break_point                  ,
     //trace debug interface
     output [31:0] debug_wb_pc                      ,
     output [ 3:0] debug_wb_rf_wen                  ,
     output [ 4:0] debug_wb_rf_wnum                 ,
-    output [31:0] debug_wb_rf_wdata
+    output [31:0] debug_wb_rf_wdata                ,
+    output [31:0] debug_wb_inst                    ,
+
+    // difftest
+    output        ws_valid_diff                    ,
+    output        ws_cnt_inst_diff                 ,
+    output [63:0] ws_timer_64_diff                 ,
+    output [ 7:0] ws_inst_ld_en_diff               ,
+    output [31:0] ws_ld_paddr_diff                 ,
+    output [31:0] ws_ld_vaddr_diff                 ,
+    output [ 7:0] ws_inst_st_en_diff               ,
+    output [31:0] ws_st_paddr_diff                 ,
+    output [31:0] ws_st_vaddr_diff                 ,
+    output [31:0] ws_st_data_diff                  ,
+    output        ws_csr_rstat_en_diff             ,
+    output [31:0] ws_csr_data_diff
 );
 
 reg         ws_valid;
@@ -95,7 +113,29 @@ wire        ws_br_pre;
 wire        ws_br_pre_error;
 wire        ws_idle;
 
-assign {ws_idle        ,  //217:217
+// difftest
+wire [31:0] ws_inst         ;
+wire        ws_cnt_inst     ;
+wire [63:0] ws_timer_64     ;
+wire [ 7:0] ws_inst_ld_en   ;
+wire [31:0] ws_ld_paddr     ;
+wire [31:0] ws_ld_vaddr     ;
+wire [ 7:0] ws_inst_st_en   ;
+wire [31:0] ws_st_data      ;
+wire        ws_csr_rstat_en ;
+wire [31:0] ws_csr_data     ;
+
+assign {ws_csr_data    ,  //459:428 for difftest
+        ws_csr_rstat_en,  //427:427 for difftest
+        ws_st_data     ,  //426:395 for difftest
+        ws_inst_st_en  ,  //394:387 for difftest
+        ws_ld_vaddr    ,  //386:355 for difftest
+        ws_ld_paddr    ,  //354:323 for difftest
+        ws_inst_ld_en  ,  //322:315 for difftest
+        ws_cnt_inst    ,  //314:314 for difftest
+        ws_timer_64    ,  //313:250 for difftest
+        ws_inst        ,  //249:218 for difftest
+        ws_idle        ,  //217:217
         ws_br_pre_error,  //216:216
         ws_br_pre      ,  //215:215
         ws_dcache_miss ,  //214:214
@@ -140,7 +180,7 @@ assign ws_to_rf_bus = {rf_we   ,  //37:37
                        rf_wdata   //31:0
                       };
 
-assign ws_ready_go = 1'b1;
+assign ws_ready_go = ~debug_break_point;
 assign ws_allowin  = !ws_valid || ws_ready_go;
 always @(posedge clk) begin
     if (reset || flush_sign) begin
@@ -178,7 +218,7 @@ assign wr_csr_data  = ws_csr_result;
 
 assign icacop_flush = ws_icacop_op_en && ws_valid;
 
-assign idle_flush = ws_idle && ws_valid;
+assign idle_flush = ws_idle && real_valid;
 
 assign tlb_inst_stall = (ws_tlbsrch || ws_tlbrd) && ws_valid;
 
@@ -208,7 +248,7 @@ excp_num[0]  int
         [7]  ine
         [8]  ipe
         [9]  ale
-        [10] adem
+        [10] <null>
         [11] tlbr    |
         [12] pme     |data tlb exceptions
         [13] ppi     |
@@ -234,7 +274,6 @@ assign {csr_ecode,
                          ws_excp_num[ 7] ? {`ECODE_INE , 1'b0    , 32'b0      , 9'b0          , 1'b0    , 1'b0    , 19'b0             } :
                          ws_excp_num[ 8] ? {`ECODE_IPE , 1'b0    , 32'b0      , 9'b0          , 1'b0    , 1'b0    , 19'b0             } :   //close ipe excp now
                          ws_excp_num[ 9] ? {`ECODE_ALE , ws_valid, ws_error_va, 9'b0          , 1'b0    , 1'b0    , 19'b0             } :
-                         ws_excp_num[10] ? {`ECODE_ADEM, ws_valid, ws_error_va, `ESUBCODE_ADEM, 1'b0    , 1'b0    , 19'b0             } :
                          ws_excp_num[11] ? {`ECODE_TLBR, ws_valid, ws_error_va, 9'b0          , ws_valid, ws_valid, ws_error_va[31:13]} :
                          ws_excp_num[12] ? {`ECODE_PME , ws_valid, ws_error_va, 9'b0          , 1'b0    , ws_valid, ws_error_va[31:13]} :
                          ws_excp_num[13] ? {`ECODE_PPI , ws_valid, ws_error_va, 9'b0          , 1'b0    , ws_valid, ws_error_va[31:13]} :
@@ -250,5 +289,23 @@ assign debug_wb_pc       = ws_pc;
 assign debug_wb_rf_wen   = {4{rf_we}};
 assign debug_wb_rf_wnum  = ws_dest;
 assign debug_wb_rf_wdata = ws_final_result;
+assign debug_wb_inst     = ws_inst;
+assign debug_ws_valid    = ws_valid;
+
+assign ws_valid_diff        = real_valid        ;
+assign ws_timer_64_diff     = ws_timer_64       ;
+assign ws_cnt_inst_diff     = ws_cnt_inst       ;
+
+assign ws_inst_ld_en_diff   = ws_inst_ld_en     ;
+assign ws_ld_paddr_diff     = ws_ld_paddr       ;
+assign ws_ld_vaddr_diff     = ws_ld_vaddr       ;
+
+assign ws_inst_st_en_diff   = ws_inst_st_en     ;
+assign ws_st_paddr_diff     = ws_ld_paddr_diff  ;
+assign ws_st_vaddr_diff     = ws_ld_vaddr_diff  ;
+assign ws_st_data_diff      = ws_st_data        ;
+
+assign ws_csr_rstat_en_diff = ws_csr_rstat_en   ;
+assign ws_csr_data_diff     = ws_csr_data       ;
 
 endmodule

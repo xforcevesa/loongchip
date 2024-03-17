@@ -45,6 +45,8 @@ module id_stage(
     input                               ws_to_ds_valid,
     //from axi
     input                               write_buffer_empty,
+    //from dcache 
+	input 							    dcache_empty      ,
     //to btb
     output                              btb_operate_en    ,
     output                              btb_pop_ras       ,
@@ -58,8 +60,19 @@ module id_stage(
     output [31:0]                       btb_right_target  ,    
     output [31:0]                       btb_operate_pc    ,
     output [ 4:0]                       btb_operate_index ,
+ 
+    //debug
+    input                               infor_flag,
+    input  [ 4:0]                       reg_num,
+    output [31:0]                       debug_rf_rdata1,
+
     //to rf: for write back
-    input  [`WS_TO_RF_BUS_WD -1:0]      ws_to_rf_bus  
+    input  [`WS_TO_RF_BUS_WD -1:0]      ws_to_rf_bus      
+    `ifdef DIFFTEST_EN
+    ,
+    // difftest
+    output [31:0]                       rf_to_diff [31:0]
+    `endif
 );
 
 reg         ds_valid   ;
@@ -297,7 +310,13 @@ assign br_bus       = {btb_pre_error_flush,           //32:32
                        btb_pre_error_flush_target     //31:0
                       };
 
-assign ds_to_es_bus = {inst_idle     ,  //235:235
+assign ds_to_es_bus = {inst_csr_rstat_en,  // 349:349 for difftest
+                       inst_st_en       ,  // 348:341 for difftest
+                       inst_ld_en       ,  // 340:333 for difftest
+                       (inst_rdcntvl_w | inst_rdcntvh_w | inst_rdcntid_w), //332:332  for difftest
+                       timer_64      ,  //331:268  for difftest
+                       ds_inst       ,  //267:236  for difftest
+                       inst_idle     ,  //235:235
                        btb_pre_error_flush, //234:234
                        br_to_btb     ,  //233:233
                        ds_icache_miss,  //232:232
@@ -712,7 +731,7 @@ assign inst_need_rkd = inst_add_w   |
                        inst_invtlb  ;
 
 
-assign rf_raddr1 = rj;
+assign rf_raddr1 = infor_flag?reg_num:rj;
 assign rf_raddr2 = src_reg_is_rd ? rd : rk;
 regfile u_regfile(
     .clk    (clk      ),
@@ -723,6 +742,10 @@ regfile u_regfile(
     .we     (rf_we    ),
     .waddr  (rf_waddr ),
     .wdata  (rf_wdata )
+    `ifdef DIFFTEST_EN
+    ,
+    .rf_o   (rf_to_diff)
+    `endif
     );
 
 assign {es_dep_need_stall,
@@ -794,7 +817,7 @@ assign excp_num = {excp_ipe, excp_ine, inst_break, inst_syscall, ds_excp_num, ha
 assign rd_csr_addr = csr_idx;
 
 //when cache operate icache, will refetch inst after this inst.
-assign refetch = (inst_tlbwr || inst_tlbfill || inst_tlbrd || inst_invtlb || inst_ertn || inst_ibar) && ds_valid;  //this inst will change addr trans 
+assign refetch = (inst_tlbwr || inst_tlbfill || inst_tlbrd || inst_invtlb || inst_ibar) && ds_valid;  //this inst will change addr trans 
 
 assign tlb_inst_stall = es_tlb_inst_stall || ms_tlb_inst_stall || ws_tlb_inst_stall;
 
@@ -903,7 +926,7 @@ always @(posedge clk) begin
     end
 end
 
-assign btb_operate_en    = ds_valid && ds_allowin && !ds_excp;
+assign btb_operate_en    = ds_valid && ds_ready_go && es_allowin && !ds_excp;
 assign btb_operate_pc    = ds_pc;
 assign btb_pop_ras       = inst_jirl; 
 assign btb_push_ras      = inst_bl;
@@ -920,8 +943,22 @@ assign btb_pre_error_flush = (btb_add_entry || btb_delete_entry || btb_pre_error
 assign btb_pre_error_flush_target = br_taken ? br_target : ds_pc + 32'h4;
 
 //ibar dbar
-assign pipeline_no_empty = es_to_ds_valid || ms_to_ds_valid || ws_to_ds_valid || !write_buffer_empty;
+assign pipeline_no_empty = es_to_ds_valid || ms_to_ds_valid || ws_to_ds_valid || !write_buffer_empty || !dcache_empty;
 assign dbar_stall = inst_dbar && pipeline_no_empty;
 assign ibar_stall = inst_ibar && pipeline_no_empty;
+
+// difftest
+wire [7:0]  inst_ld_en;
+wire [7:0]  inst_st_en;
+wire        inst_csr_rstat_en;
+
+// ll ldw ldhu ldh ldbu ldb
+assign inst_ld_en = {2'b0, inst_ll_w, inst_ld_w, inst_ld_hu, inst_ld_h, inst_ld_bu, inst_ld_b};
+// sc(llbit = 1) stw sth stb
+assign inst_st_en = {4'b0, ds_llbit && inst_sc_w, inst_st_w, inst_st_h, inst_st_b};
+assign inst_csr_rstat_en = (inst_csrrd || inst_csrwr || inst_csrxchg) && (csr_idx == 14'd5);
+
+// debug
+assign debug_rf_rdata1 = rf_raddr1;
 
 endmodule

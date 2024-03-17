@@ -1,21 +1,24 @@
-#pragma once
-#include "common.h"
+#ifndef CHIPLAB_RF_TRACE_H
+#define CHIPLAN_RF_TRACE_H
+
+#include "cpu_tool.h"
 #include <zlib.h>
 #include <cstring>
-typedef struct RfTraceNode
-{
+
+typedef struct RfTraceNode {
     vluint64_t pc;
     vluint64_t wa;
     vluint64_t wd;
 }RfTraceNode;
-class RfTraceBuffer
-{
+
+class RfTraceBuffer {
 public:
     int data_num;
     gzFile trace;
     FILE* trace_txt;
     static const int data_max = 3*4096;
     vluint64_t data[data_max];
+
     RfTraceBuffer(){
         trace     = nullptr;
         trace_txt = nullptr;
@@ -45,6 +48,7 @@ public:
         else trace_txt = fopen(target,"wt");
     }
 };
+
 class CpuRfTrace:CpuTool
 {
 public:
@@ -143,3 +147,5 @@ public:
         return res;
     }
 };
+
+#endif  // CHIPLAN_RF_TRACE_H

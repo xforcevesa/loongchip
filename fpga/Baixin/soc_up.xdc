@@ -108,6 +108,12 @@ set_property IOSTANDARD LVCMOS33 [get_ports UART_RX]
 set_property PACKAGE_PIN E6 [get_ports UART_TX]
 set_property IOSTANDARD LVCMOS33 [get_ports UART_TX]
 
+#debug uart
+set_property PACKAGE_PIN Y21 [get_ports UART_RX2]
+set_property IOSTANDARD LVCMOS33 [get_ports UART_RX2]
+set_property PACKAGE_PIN W21 [get_ports UART_TX2]
+set_property IOSTANDARD LVCMOS33 [get_ports UART_TX2]
+
 #ejtag
 set_property PACKAGE_PIN K15 [get_ports EJTAG_TRST]
 set_property PACKAGE_PIN M15 [get_ports EJTAG_TCK]
@@ -157,11 +163,12 @@ set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets EJTAG_TCK_IBUF]
 create_clock -period 40.000 -name mrxclk_0 -waveform {0.000 20.000} [get_ports mrxclk_0]
 create_clock -period 40.000 -name mtxclk_0 -waveform {0.000 20.000} [get_ports mtxclk_0]
 
-set_false_path -from [get_clocks clk_pll_i] -to [get_clocks clk_out1_clk_pll_33]
-set_false_path -from [get_clocks mrxclk_0] -to [get_clocks clk_out1_clk_pll_33]
-set_false_path -from [get_clocks mtxclk_0] -to [get_clocks clk_out1_clk_pll_33]
-set_false_path -from [get_clocks clk_out1_clk_pll_33] -to [get_clocks mrxclk_0]
-set_false_path -from [get_clocks clk_out1_clk_pll_33] -to [get_clocks mrxclk_0]
-set_false_path -from [get_clocks clk_out1_clk_pll_33] -to [get_clocks mtxclk_0]
-set_false_path -from [get_clocks clk_out1_clk_pll_33] -to [get_clocks mtxclk_0]
-
+set_false_path -from [get_clocks clk_pll_i] -to [get_clocks clk_out2_clk_pll_33]
+set_false_path -from [get_clocks mrxclk_0] -to [get_clocks clk_out2_clk_pll_33]
+set_false_path -from [get_clocks mtxclk_0] -to [get_clocks clk_out2_clk_pll_33]
+set_false_path -from [get_clocks clk_out2_clk_pll_33] -to [get_clocks clk_out1_clk_pll_33]
+set_false_path -from [get_clocks clk_out1_clk_pll_33] -to [get_clocks clk_out2_clk_pll_33]
+set_false_path -from [get_clocks clk_out2_clk_pll_33] -to [get_clocks mrxclk_0]
+set_false_path -from [get_clocks clk_out2_clk_pll_33] -to [get_clocks mrxclk_0]
+set_false_path -from [get_clocks clk_out2_clk_pll_33] -to [get_clocks mtxclk_0]
+set_false_path -from [get_clocks clk_out2_clk_pll_33] -to [get_clocks mtxclk_0]

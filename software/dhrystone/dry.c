@@ -5,7 +5,7 @@
 	*) echo 'Filename must end in ".c"' >&2; exit 1;;
 	esac
     
-    //CC=../../../toolchains/loongarch32_gnu/install/bin/loongarch32-unknown-elf-gcc
+    //CC=../../../toolchains/loongarch32r-linux-gnusf*/bin/loongarch32r-linux-gnusf-gcc
     
 	echo "${CC=cc} -c ${CFLAGS} $0 -o dry1.o"
 	      ${CC}    -c ${CFLAGS} $0 -o dry1.o || exit 1
@@ -456,7 +456,7 @@ struct tms      time_info;
 
 #include <stdio.h>
                 /* for strcpy, strcmp */
-
+#define stderr 0
 #define Null 0 
                 /* Value of a Null pointer */
 #define true  1

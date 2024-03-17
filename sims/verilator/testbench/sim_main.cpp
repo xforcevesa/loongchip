@@ -1,9 +1,11 @@
+#include <stdio.h>
+#include <sys/time.h>
 #include <verilated.h>
 
 #include "testbench.h" 
+#include "common.h"
 
-#include <stdio.h>
-#include <sys/time.h>
+extern char* chiplab_home;
 
 // Current simulation time (64-bit unsigned)
 vluint64_t main_time = 0;
@@ -20,7 +22,7 @@ void init_verilator(int argc, char** argv, char** env){
     Verilated::randReset(RESET_VAL);
 
     //if INIT_VAL is 2, set random seed
-    Verilated::randSeed(RESET_SEED);
+    //Verilated::randSeed(RESET_SEED);
 
     // Verilator must compute traced signals
     Verilated::traceEverOn(true);
@@ -36,6 +38,13 @@ void init_verilator(int argc, char** argv, char** env){
 
 
 int main(int argc, char** argv, char** env) {
+    /* check CHIPLAB_HOME path */
+    chiplab_home = getenv("CHIPLAB_HOME");
+    if (chiplab_home == NULL) {
+        printf("FATAL: $(CHIPLAB_HOME) is not defined!\n");
+        exit(1);
+    }
+
     init_verilator(argc,argv,env);
     CpuTestbench* tb = new CpuTestbench(argc,argv,env,&main_time); 
 

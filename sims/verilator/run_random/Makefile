@@ -8,7 +8,8 @@ else ifeq ($(VERILATOR_HOME2), $(wildcard $(VERILATOR_HOME2)))
 VERILATOR_HOME=$(VERILATOR_HOME2)
 else
 #add your verilator include path to this var, then delete this line.
-$(error Please install verilator or config the installed path here.)
+VERILATOR_HOME=/home/yangzhaoxin/opt/verilator/share/verilator
+#$(error Please install verilator or config the installed path here.)
 endif
 
 
@@ -20,7 +21,7 @@ endif
 
 #configure options
 # Change the options below for your testbench
-#RAND32=y
+#LA32=y
 #multithread
 #THREAD=1
 #move to config-random.mak
@@ -39,6 +40,7 @@ TESTBENCH_INCLUDE = ../testbench/include
 SIMU_TOP = ../testbench
 SIMU_INCLUDE =$(TOP_SOC_SRC)
 SIMU_TOP_NAME=simu_top
+DIFFTEST=difftest
 INCLUDE += -I${TESTBENCH_INCLUDE}
 INCLUDE += -I${OBJ_DIR}
 
@@ -49,11 +51,11 @@ comma=,
 empty= 
 space=${empty} 
 
-all:random
+all:random check_result
 random:link
-	+make -j verilator
-	+make testbench
-	+make simulation_run_random
+	$(MAKE) -j verilator
+	$(MAKE) testbench
+	$(MAKE) simulation_run_random
 
 link:config-generator.mak
 config-generator.mak:
@@ -97,14 +99,15 @@ VERILATOR_SRC += ${NAND_SRC}/*.v
 
 CFLAGS += -std=c++11
 CFLAGS += -DSLICE_SIZE=${SLICE_SIZE}
+CFLAGS += -DDEAD_CLOCK_SIZE=${DEAD_CLOCK_SIZE}
 
 ifeq ('${RANDTEST}', 'y')
 CFLAGS += -DRAND_TEST 
 VFLAGS += -DRAND_TEST 
 endif 
 
-ifeq ('${RAND32}', 'y')
-CFLAGS += -DRAND32 
+ifeq ('${LA32}', 'y')
+CFLAGS += -DLA32 
 endif 
 
 ifeq ('${CPU_2CMT}', 'y')
@@ -123,6 +126,8 @@ CFLAGS += -DAXI128
 VFLAGS += -DAXI128
 endif
 
+VFLAGS += -DDIFFTEST_EN
+
 ifeq ('${DUMP_VCD}', 'y') 
 CFLAGS += -DDUMP_VCD 
 WAVEFILE = vcd 
@@ -139,6 +144,22 @@ ifeq ('${SLICE_WAVEFORM}', 'y')
 CFLAGS += -DSLICE_WAVEFORM
 endif  
 
+ifeq ('${TRACE_COMP}', 'y')
+CFLAGS += -DTRACE_COMP
+endif 
+
+ifeq ('${SIMU_TRACE}', 'y')
+CFLAGS += -DSIMU_TRACE 
+endif 
+
+ifeq ('${MEM_TRACE}', 'y')
+CFLAGS += -DMEM_TRACE 
+endif 
+
+ifeq ('${DEAD_CLOCK_EN}', 'y')
+CFLAGS += -DDEAD_CLOCK_EN
+endif
+
 VERILATOR_INCLUDE += -y ${SIMU_TOP} 
 ALL_VERILATOR_SRC += ${SIMU_TOP}/*.v
 
@@ -153,8 +174,8 @@ verilator:${VERILATOR_SRC}
 	@echo "COMPILING verilog..."
 	@echo "============================================================================================================="
 	@echo "============================================================================================================="
-	verilator ${VERILATOR_INCLUDE} ${WAVEOPTION} --threads ${THREAD} -O3 -Wno-fatal -DSIMU -DSIMULATION=1 -Wall --trace -cc ${VFLAGS} ${SIMU_TOP_NAME}.v ${VERILATOR_SRC}
-	+make -C ${OBJ_DIR} -f "V${SIMU_TOP_NAME}.mk"
+	verilator ${VERILATOR_INCLUDE} ${WAVEOPTION} --threads ${THREAD} -O3 -Wno-fatal -DSIMU -DSIMULATION=1 -Wall --trace -cc ${VFLAGS} ${SIMU_TOP_NAME}.v ${DIFFTEST}.v ${VERILATOR_SRC}
+	$(MAKE) -C ${OBJ_DIR} -f "V${SIMU_TOP_NAME}.mk"
 
 testbench:${TESTBENCH_SRC}/*.cpp 
 	@echo "============================================================================================================="
@@ -162,7 +183,7 @@ testbench:${TESTBENCH_SRC}/*.cpp
 	@echo "COMPILING testbench..."
 	@echo "============================================================================================================="
 	@echo "============================================================================================================="
-	g++ -O3 -pthread -DVL_THREADED -DCACHE_SEED=${CACHE_SEED} -DRESET_VAL=${RESET_VAL} -DRESET_SEED=${RESET_SEED} ${CFLAGS} ${INCLUDE} ${VERILATED_SRC} ${VCD_SRC} ${FST_SRC} ${SAVE_SRC} $? ${ALL_LIB} -o output -lz
+	g++ -O3 -pthread -DVL_THREADED -DCACHE_SEED=${CACHE_SEED} -DRESET_VAL=${RESET_VAL} -DRESET_SEED=${RESET_SEED} ${CFLAGS} ${INCLUDE} ${VERILATED_SRC} ${VCD_SRC} ${FST_SRC} ${SAVE_SRC} $? ${ALL_LIB} -o output -lz -ldl
 
 simulation_run_random:
 	@echo "============================================================================================================="
@@ -170,12 +191,15 @@ simulation_run_random:
 	@echo "RUN simulation..."
 	@echo "============================================================================================================="
 	@echo "============================================================================================================="
-	make all -C ../../../software/random_boot/ ./Makefile
-	make prepare -C ./run_random -f ./Makefile
-	make all -C ./run_random -f ./Makefile
-	mv ./log/result.txt ./log/${RUN_TIME}-result.txt
-
-
+	make all -C ../../../software/random_boot/ ./Makefile || exit "$$?"
+	make prepare -C ./run_random -f ./Makefile || exit "$$?"
+	make all -C ./run_random -f ./Makefile || exit "$$?"
+check_result:
+	@echo "Check random result"
+	grep -Hs PASS  log/*/run.log > log/pass.log || true
+	grep -Hs wrong log/*/run.log > log/fail.log || true
+	grep -L PASS log/*/run.log > log/nopass.log || true
+	mkdir -p log/$(RUN_TIME)/ && mv log/*.log log/$(RUN_TIME)
 clean:
 	rm -f output & rm -rf obj_dir &	\
 	make clean -C ./run_random -f ./Makefile

@@ -1,0 +1,9 @@
+output
+obj_dir
+log
+obj
+config-generator.mak 
+config.log
+tmp
+*.o
+V*.*

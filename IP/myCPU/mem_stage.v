@@ -46,7 +46,11 @@ module mem_stage(
     input  [31:0]     csr_dmw1       ,
     input  [ 1:0]     csr_plv        ,
     input  [ 1:0]     csr_datm       ,
-    input             disable_cache  ,     
+    input             disable_cache  ,
+    // from addr trans for difftest
+    input  [ 7:0]     data_index_diff   ,
+    input  [19:0]     data_tag_diff     ,
+    input  [ 3:0]     data_offset_diff  ,
     //to addr trans 
     output            data_addr_trans_en,   
     output            dmw0_en           ,
@@ -102,7 +106,28 @@ wire        ms_cacop;
 wire        ms_idle;
 wire [31:0] ms_error_va;
 
-assign {ms_error_va      ,  //214:183
+// difftest
+wire        ms_cnt_inst     ;
+wire [63:0] ms_timer_64     ;
+wire [31:0] ms_inst         ;
+wire [ 7:0] ms_inst_ld_en   ;
+wire [31:0] ms_ld_paddr     ;
+wire [31:0] ms_ld_vaddr     ;
+wire [ 7:0] ms_inst_st_en   ;
+wire [31:0] ms_st_data      ;
+wire        ms_csr_rstat_en ;
+wire [31:0] ms_csr_data     ;
+
+assign {ms_csr_data      ,  //424:393  for difftest
+        ms_csr_rstat_en  ,  //392:392  for difftest
+        ms_st_data       ,  //391:360  for difftest
+        ms_inst_st_en    ,  //359:352  for difftest
+        ms_ld_vaddr      ,  //351:320  for difftest
+        ms_inst_ld_en    ,  //319:312  for difftest
+        ms_cnt_inst      ,  //311:311  for difftest
+        ms_timer_64      ,  //310:247  for difftest
+        ms_inst          ,  //246:215  for difftest
+        ms_error_va      ,  //214:183
         ms_idle          ,  //182:182
         ms_cacop         ,  //181:181
         ms_preld_inst    ,  //180:180
@@ -157,7 +182,6 @@ wire        dest_zero;
 wire [15:0] excp_num;
 wire        excp;
 
-wire        excp_adem;
 wire        excp_tlbr;
 wire        excp_pil ;
 wire        excp_pis ;
@@ -167,7 +191,17 @@ wire        excp_ppi ;
 wire        da_mode  ;
 wire        pg_mode  ;
 
-assign ms_to_ws_bus = {ms_idle        ,  //217:217
+assign ms_to_ws_bus = {ms_csr_data    ,  //459:428 for difftest
+                       ms_csr_rstat_en,  //427:427 for difftest
+                       ms_st_data     ,  //426:395 for difftest
+                       ms_inst_st_en  ,  //394:387 for difftest
+                       ms_ld_vaddr    ,  //386:355 for difftest
+                       ms_ld_paddr    ,  //354:323 for difftest
+                       ms_inst_ld_en  ,  //322:315 for difftest
+                       ms_cnt_inst    ,  //314:314 for difftest
+                       ms_timer_64    ,  //313:250 for difftest
+                       ms_inst        ,  //249:218 for difftest
+                       ms_idle        ,  //217:217
                        ms_br_pre_error,  //216:216
                        ms_br_pre      ,  //215:215
                        dcache_miss    ,  //214:214
@@ -266,11 +300,11 @@ assign da_mode =  csr_da && !csr_pg;
 assign data_addr_trans_en = pg_mode && !dmw0_en && !dmw1_en && !cacop_op_mode_di;
 
 //addr dmw trans
-assign dmw0_en = ((csr_dmw0[`PLV0] && csr_plv == 2'd0) || (csr_dmw0[`PLV3] && csr_plv == 2'd3)) && (ms_error_va[31:29] == csr_dmw0[`VSEG]);
-assign dmw1_en = ((csr_dmw1[`PLV0] && csr_plv == 2'd0) || (csr_dmw1[`PLV3] && csr_plv == 2'd3)) && (ms_error_va[31:29] == csr_dmw1[`VSEG]);
+assign dmw0_en = ((csr_dmw0[`PLV0] && csr_plv == 2'd0) || (csr_dmw0[`PLV3] && csr_plv == 2'd3)) && (ms_error_va[31:29] == csr_dmw0[`VSEG]) && pg_mode;
+assign dmw1_en = ((csr_dmw1[`PLV0] && csr_plv == 2'd0) || (csr_dmw1[`PLV3] && csr_plv == 2'd3)) && (ms_error_va[31:29] == csr_dmw1[`VSEG]) && pg_mode;
 
-assign excp = excp_tlbr || excp_pil || excp_pis || excp_ppi || excp_pme || excp_adem || ms_excp;
-assign excp_num = {excp_pil, excp_pis, excp_ppi, excp_pme, excp_tlbr, excp_adem, ms_excp_num};
+assign excp = excp_tlbr || excp_pil || excp_pis || excp_ppi || excp_pme || ms_excp;
+assign excp_num = {excp_pil, excp_pis, excp_ppi, excp_pme, excp_tlbr, 1'b0, ms_excp_num};
 
 //tlb exception //preld should not generate these excp
 assign excp_tlbr = (access_mem || ms_cacop) && !data_tlb_found && data_addr_trans_en;
@@ -279,9 +313,7 @@ assign excp_pis  = ms_store_op && !data_tlb_v && data_addr_trans_en;
 assign excp_ppi  = access_mem && data_tlb_v && (csr_plv > data_tlb_plv) && data_addr_trans_en;
 assign excp_pme  = ms_store_op && data_tlb_v && (csr_plv <= data_tlb_plv) && !data_tlb_d && data_addr_trans_en;
 
-assign excp_adem = access_mem && ms_error_va[31] && (csr_plv == 2'd3) && data_addr_trans_en;
-
-assign tlb_excp_cancel_req = excp_tlbr || excp_pil || excp_pis || excp_ppi || excp_pme || excp_adem;
+assign tlb_excp_cancel_req = excp_tlbr || excp_pil || excp_pis || excp_ppi || excp_pme;
 
 assign data_uncache_en = (da_mode && (csr_datm == 2'b0))                 || 
                          (dmw0_en && (csr_dmw0[`DMW_MAT] == 2'b0))       ||
@@ -309,5 +341,14 @@ assign ms_wr_tlbehi = ms_csr_we && (ms_csr_idx == 14'h11) && ms_valid; //stall e
 assign cacop_op = ms_dest;
 assign cacop_op_mode    = cacop_op[4:3];
 assign cacop_op_mode_di = ms_cacop && ((cacop_op_mode == 2'b0) || (cacop_op_mode == 2'b1));
+
+reg  [ 7:0] tmp_data_index  ;
+reg  [ 3:0] tmp_data_offset ;
+always @(posedge clk) begin
+    tmp_data_index  <= data_index_diff;
+    tmp_data_offset <= data_offset_diff;
+end
+
+assign ms_ld_paddr = {data_tag_diff, tmp_data_index, tmp_data_offset};
 
 endmodule
