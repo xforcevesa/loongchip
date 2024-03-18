@@ -8,4 +8,5 @@ tmp
 *.o
 V*.*
 .vscode
-toolchains
+toolchains/*
+!toolchains/README.md
