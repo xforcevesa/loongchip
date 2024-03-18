@@ -12,7 +12,7 @@ Providing you're to run the simulation, see the following if you've changed your
 export CHIPLAB_HOME=$(pwd)
 cd $CHIPLAB_HOME/sims/verilator/run_prog
 # One example in the software directory
-./configure.sh --run linux
+./configure.sh --run my_program
 make -j$(nproc)
 ```
 

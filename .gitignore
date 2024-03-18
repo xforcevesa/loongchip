@@ -7,3 +7,5 @@ config.log
 tmp
 *.o
 V*.*
+.vscode
+toolchains
