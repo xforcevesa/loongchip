@@ -1,3 +1,11 @@
+# Toolchains
+
+- We published the toolchains binary to release.
+- [Click here](https://github.com/xforcevesa/loongchip/releases/tag/toolchains), download the ```toolchains.zip``` and extract it in the directory.
+- Okay, that's all. The following is the Old README inherited from the original chiplab.
+
+# Old README Content
+
 1. [GCC交叉编译器](https://gitee.com/loongson-edu/la32r-toolchains/releases)
 
 根据架构下载相映`loongarch32r-linux-gnusf-${TOOLCHAINS_DATE}.tar.gz`，并解压。解压后将`loongarch32r-linux-gnusf-${TOOLCHAINS_DATE}/bin/`目录添加到path中。
