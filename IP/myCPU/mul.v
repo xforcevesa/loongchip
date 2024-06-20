@@ -73,7 +73,6 @@ assign Carry = A & B | A & C | B & C;
 
 endmodule
 
-
 module WallaceTreeBase(
     input [16:0] InData,
     input [13:0] CIn,

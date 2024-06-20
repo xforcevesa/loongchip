@@ -3,68 +3,123 @@ module core_top
 	parameter TLBNUM = 32
 )
 (
+    // aclk: clock signal for the core and pipeline stages
     input           aclk,
+    // aresetn: active-low reset signal for the core and pipeline stages
     input           aresetn,
+    // intrpt: interrupt signal from the external interrupt controller  
     input    [ 7:0] intrpt, 
-    //AXI interface 
-    //read reqest
+
+    // AXI interface 
+    // AXI read reqest
     output   [ 3:0] arid,
+    // AXI read address
     output   [31:0] araddr,
+    // AXI read data length
     output   [ 7:0] arlen,
+    // AXI read data size
     output   [ 2:0] arsize,
+    // AXI read burst type
     output   [ 1:0] arburst,
+    // AXI read lock type
     output   [ 1:0] arlock,
+    // AXI read cache type
     output   [ 3:0] arcache,
+    // AXI read protection type
     output   [ 2:0] arprot,
+    // AXI read is valid
     output          arvalid,
+    // AXI read is ready
     input           arready,
-    //read back
+
+    // Read Back Stage
+    // read ID
     input    [ 3:0] rid,
+    // read data
     input    [31:0] rdata,
+    // read response
     input    [ 1:0] rresp,
+    // read last
     input           rlast,
+    // read is valid
     input           rvalid,
+    // read is ready
     output          rready,
-    //write request
+
+    // AXI write request
+    // AXI write ID
     output   [ 3:0] awid,
+    // AXI write address
     output   [31:0] awaddr,
+    // AXI write data length
     output   [ 7:0] awlen,
+    // AXI write data size
     output   [ 2:0] awsize,
+    // AXI write burst type
     output   [ 1:0] awburst,
+    // AXI write lock type
     output   [ 1:0] awlock,
+    // AXI write cache type
     output   [ 3:0] awcache,
+    // AXI write protection type
     output   [ 2:0] awprot,
+    // AXI write is valid
     output          awvalid,
+    // AXI write is ready
     input           awready,
-    //write data
+
+    // Write data
+    // write ID
     output   [ 3:0] wid,
+    // write data
     output   [31:0] wdata,
+    // write strobe
     output   [ 3:0] wstrb,
+    // write last
     output          wlast,
+    // write is valid
     output          wvalid,
+    // write is ready
     input           wready,
-    //write back
+
+    // Write back
+    // Write back ID
     input    [ 3:0] bid,
+    // Write back response
     input    [ 1:0] bresp,
+    // Write back is valid
     input           bvalid,
+    // Write back is ready
     output          bready,
 
-    //debug
+    // Debug interface
+    // Debug break point
     input           break_point,
+    // Debug halt request
     input           infor_flag,
+    // Debug halt acknowledge
     input  [ 4:0]   reg_num,
+    // Debug halt address
     output          ws_valid,
+    // Debug halt data
     output [31:0]   rf_rdata,
 
+    // Debug write back program counter
     output [31:0] debug0_wb_pc,
+    // Debug write back instruction
     output [ 3:0] debug0_wb_rf_wen,
+    // Debug write back register number
     output [ 4:0] debug0_wb_rf_wnum,
+    // Debug write back register data
     output [31:0] debug0_wb_rf_wdata,
+    // Debug write back instruction
     output [31:0] debug0_wb_inst
 );
+// Internal signals
 reg         reset;
 always @(posedge aclk) reset <= ~aresetn; 
 
+// to if_stage & id_stage
 wire         ds_allowin;
 wire         es_allowin;
 wire         ms_allowin;

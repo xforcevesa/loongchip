@@ -144,7 +144,7 @@ always @(posedge clk) begin
     end 
     else case (flush_inst_req_state)
         flush_inst_req_empty: begin
-            if(flush_inst_delay) begin
+            if (flush_inst_delay) begin
                 flush_inst_req_buffer <= nextpc;
                 flush_inst_req_state  <= flush_inst_req_full;
             end
@@ -322,7 +322,7 @@ assign inst_uncache_en = (da_mode && (csr_datf == 2'b0))                 ||
                          (inst_addr_trans_en && (inst_tlb_mat == 2'b0))  ||
                          disable_cache;
 
-//assign inst_uncache_en = 1'b1; //used for debug
+// assign inst_uncache_en = 1'b1; //used for debug
 
 // IF stage
 assign fs_ready_go    = inst_data_ok || inst_buff_enable || excp;
@@ -337,7 +337,7 @@ always @(posedge clk) begin
     end
 
     if (reset) begin
-        fs_pc        <= 32'h1bfffffc;  //trick: to make nextpc be 0x1c000000 during reset 
+        fs_pc        <= 32'h1bfffffc;  // trick: to make nextpc be 0x1c000000 during reset 
         fs_excp      <= 1'b0;
         fs_excp_num  <= 4'b0;
     end
