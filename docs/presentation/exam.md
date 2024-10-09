@@ -1,282 +1,152 @@
-# 系统能力大赛考核方案
-
-## 总述
-
-1. 所有考核方案的评分均从100分开始进行加分或减分，允许负分存在，分数无上下限。
-2. 60分为及格分，不及格者拟退出队伍处理。
-3. 本考核按赛道实行排名制，允许一人做多个赛道，但最终按考核成绩的排名与个人意愿综合决定分流情况。
-4. 未学会Git等基础工具使用者，扣80分。
-
-难度排名：操作系统 \< 编译系统 \< 龙芯杯
-
-## 操作系统阶段考核
-
-### 任务一：Rustlings 练习题
-
-描述：
-
-Rustlings是一款基于Rust语言的练习项目，旨在帮助开发者熟悉Rust编程语言。它提供了一系列的练习题目，并通过编译、运行、测试等方式帮助开发者熟悉Rust的基本语法、数据类型、控制流、函数、模块、错误处理等概念。
-
-链接：
-
-https://rustlings.cool
-
-任务：
-
-完成Rustlings的全部练习题目，并提交代码。
-
-评分标准：
-
-每完成一道题，加一分。未完成的题目不扣分。
-
-提交方式：
-
-将完成的题目代码提交到GitHub仓库，并在仓库的README中说明完成情况。
-
-### 任务二：rCore Tutorial 实验（重要）
-
-描述：
-
-2024S课程《Rust操作系统内核设计与实现》的实验项目，基于rCore-Tutorial-v3教程，完成实验代码。
-
-链接：
-
-1. https://learningos.cn/rCore-Tutorial-Guide-2024S/index.html
-2. https://github.com/LearningOS/rCore-Tutorial-Code-2024S
-
-任务：
-
-完成第3、4、5、6、8章节的代码实验，以上几个章节选其一。
-
-评分标准：
-
-1. 未fork仓库与看过源码者，扣80分。
-2. 未更改其中内容，且不能理解其结构与功能者，扣60分。
-3. 未更改其中内容，但能够详细解释其结构与功能者，扣40分。
-4. 做了一定的功能性的修改且能够正常运行，但未通过任何测例者，扣30分。
-5. 做了一定的功能性的修改且能过全部测例者，按以下标准进行加分：
-    - 第3章实验：加20分；
-    - 第4章实验：加30分；
-    - 第5章实验：加50分；
-    - 第6章实验：加80分；
-    - 第8章实验：加120分。
-6. 做了一定的工程性的更改，但只能过全部测例的40%及以上者，分别按第7项加分标准的一半加分。
-7. 第7项与第8项加分标准可无限制叠加。
-8. 其他加分项（基于rCore基础上进行拓展，可无限制叠加）：
-    - 实现任一新的主流文件系统：每一个加50分；
-    - 实现VirtIO系列任一驱动：每一个加40分；
-    - 实现UART串口驱动：加30分；
-    - 实现异步操作系统驱动：加100分；
-    - 实现任一其他功能，按其实现难度每个加20～200分。
-
-提交方式：
-
-将完成的实验代码提交到GitHub仓库，并在仓库的README中说明完成情况。
-
-## 编译系统阶段考核
-
-### 任务一：InfiniTensor C++ 作业
-
-描述：
-
-InfiniTensor是一款基于C++语言的张量计算框架，它提供了高效的张量运算、并行计算、自动微分、自动并行化等能力。该项目发起组织开创了第一届InfiniTensor开源集训营。我们就借用他们的C++考核作业作为本次考核的参考。
-
-链接：
-
-https://github.com/LearningInfiniTensor/learning-cxx
-
-任务：
-
-完成其作业的全部内容，并提交代码。
-
-评分标准：
-
-每完成一道题，加两分。未完成的题目不扣分。
-
-提交方式：
-
-将完成的题目代码提交到GitHub仓库，并在仓库的README中说明完成情况。
-
-### 任务二：LLVM 实验
-
-描述：
-
-LLVM是一款开源的编译器框架，它提供了高效的优化、代码生成、代码分析等能力。我们本次项目借用其LLVM实例教程作为本次考核的参考。
-
-链接：
-
-https://llvm.org/docs/GettingStartedTutorials.html
-
-任务：
-
-基于LLVM设计出一个基础编译器，支持while、if、break、continue语句与整数加减乘除等，并完成其编译、链接、运行等流程。
-
-评分标准：
-
-本次实验完成者，加80分。未完成者不扣分。
-
-提交方式：
-
-将完成的实验代码提交到GitHub仓库，并在仓库的README中说明完成情况。
-
-### 任务三：编译器设计（重要）
-
-任务：
-
-设计一个支持RISC-V或ARM的64位指令集编译器， 支持SysY2022全部语言特征，能够生成可运行的汇编代码。
-最多只可使用词法语法分析的生成器，不得使用LLVM等。只可使用Java或C/C++或Rust
-
-评分标准：
-
-1. 未设计正确的词法分析者，扣60分。
-2. 未设计正确的语法分析者，扣40分。
-3. 未设计正确的中间代码生成者，扣30分。
-4. 未设计正确的目标代码生成者，扣20分。
-5. 能生成目标代码（汇编语言），但未通过超过40%给定测例者，扣10分。
-6. 能生成目标代码，但通过几乎所有给定测例者，加20分。
-7. 基于第6点之上，与gcc -O0加volatile的源码编译后的运行时间做对比，每加速5%者加5分。不满5%的按向下取为准。若没有此基准快，那么不加分。
-8. 基于第7点之上，与gcc -O2的源码编译后的运行时间做对比，每加速5%者，加50分，不满5%的按向下取为准。若没有此基准快，那么不加分。
-9. 可组成一个小组完成，若该编译器多于1人完成，那么每人的参考得分M为（假设按照以上标准计算的原得分为N）：
-    - N*4/5，人数为2；
-    - N*3/5，人数为3；
-    - N/2，人数大于3。
-
-    且小组每人需进行面试，通过面试结果得到每个人得分的参考系数C，那么一个人的最终得分为C*(M-60)+60。若一个人参考得分不及格，那么其最终得分仍然为M
-    - C为1.5：为团队主力，贡献最多代码，对团队完成的编译器了解最多。
-    - C为1.3：为团队二把手，负责设计各类测试项或协助团队主力完成各类工作。
-    - C为1.1：为团队其他活跃成员，不摆烂，不摸鱼，了解代码结构。
-    - C为0.3～-0.4：为团队摆烂成员，对编译器结构知识等知道很少，此比分按照具体情况变动
-
-## 龙芯杯阶段考核
-
-### 任务一：C语言与汇编练习题
-
-描述：
-
-傲来操作系统（EulixOS）是由中科院软件所 / 中科南京软件技术研究院团队基于 openEuler 打造的操作系统发行版，其开发目标是集成软件所的最新科研成果，面向开源爱好者、科研人员和学生，为在线服务、高性能计算、AI 计算等使用场景提供一款安全、易用的操作系统。
-
-本次项目借用其组织集训营的C语言与汇编练习题作为本次考核的参考。
-
-链接：
-
-1. https://gitee.com/LearningEulixOS/2024-exercises-stage-1
-2. https://gitee.com/LearningEulixOS/2024-exercises-stage-2
-   
-任务：
-
-完成其练习题，并提交代码。
-
-评分标准：
-
-每完成一道题，加一分。未完成的题目不扣分。
-
-提交方式：
-
-将完成的题目代码提交到GitHub仓库，并在仓库的README中说明完成情况。
-
-### 任务二：HDLBits刷题
-
-描述：
-
-HDLBits 是一个用于学习硬件描述语言 (HDL) 的在线平台，特别适合初学者练习 Verilog 语言。它提供了大量的练习题目，涵盖了基本的数字电路设计概念，如组合逻辑、时序逻辑、状态机等。通过解题，用户可以在实践中掌握 Verilog 代码的编写和调试方法。
-
-链接：
-
-https://hdlbits.01xz.net/wiki/Main_Page
-
-任务：
-
-完成其全部题目，并提交代码。
-
-评分标准：
-
-每完成一道题，加一分。未完成的题目不扣分。
-
-提交方式：
-
-将完成的题目代码提交到GitHub仓库，并在仓库的README中说明完成情况。
-
-### 任务三：南京大学数字逻辑与计算机组成实验
-
-描述：
-
-南京大学数字逻辑与计算机组成实验，是南京大学计算机学院的重点实验课程。实验内容包括Verilog语言的语法、语义、语法制导定义、语法制导翻译、语法制导编程、Verilog综合工具、仿真工具、仿真验证、数字逻辑电路设计、数字逻辑电路仿真、综合、验证等。
-
-链接：
-
-1. https://nju-projectn.github.io/dlco-lecture-note/index.html
-2. https://github.com/NJU-ProjectN/nvboard
-
-任务：
-
-完成其中的实验一、二、三、六、七。此亦为『一生一芯』项目预学习内容之一。未完成的不扣分。
-
-评分标准：
-
-按以下标准加分：
-   - 实验一：加20分；
-   - 实验二：加30分；
-   - 实验三：加50分；
-   - 实验六：加80分；
-   - 实验七：加120分。
-
-其他实验若完成，实验4～5每个加70分，实验8及以后每个加150分。
-
-提交方式：
-
-将完成的实验代码提交到GitHub仓库，并在仓库的README中说明完成情况。
-
-### 任务四：《CPU设计实战》实验
-
-描述：
-
-《CPU设计实战》是一本经典的CPU设计入门书籍。本次项目借用其CPU设计实战课程作为本次考核的参考。
-
-链接：
-
-https://gitee.com/loongson-edu/cdp-lab
-
-任务：
-
-完成其中实验，未完成的不扣分。
-
-评分标准：
-
-每个实验加10分。
-
-提交方式：
-
-将完成的实验代码提交到GitHub仓库，并在仓库的README中说明完成情况。
-
-### 任务五：龙芯杯项目实践（重要）
-
-任务：
-
-我们将基于OpenLA500与Chiplab，参考BOOM RISC-V核，完成一个完整的LoongArch 32 Reducd架构CPU核心的设计、仿真、验证、优化、上板等流程。
-
-链接：
-
-1. https://gitee.com/loongson-edu/chiplab
-2. https://gitee.com/loongson-edu/open-la500
-3. https://boom-core.org/
-
-评分标准：
-
-1. 未设计正确的ALU者，扣60分。
-2. 未设计正确的指令集架构者，扣40分。
-3. 未设计正确的流水线结构者，扣30分。
-4. 未设计正确的控制逻辑者，扣20分。
-5. 能生成目标代码（汇编语言），但通过超过40%给定测例者，加20分。
-6. 基于第5点，与OpenLA500的平均测例运行时间做对比，每加速5%者，加5分，不满5%的按向下取为准。若没有此基准快，那么不加分。
-7. 基于第6点，与本人今年所设计顺序核的平均测例运行时间做对比，每加速5%者，加100分，不满5%的按向下取为准。若没有此基准快，那么不加分。
-8. 可组成一个小组完成，若该项目多于1人完成，那么每人的参考得分M为（假设按照以上标准计算的原得分为N）：
-    - N，人数为2；
-    - N*3/4，人数为3；
-    - N*2/3，人数大于3。
-
-    且小组每人需进行面试，通过面试结果得到每个人得分的参考系数C，那么一个人的最终得分为C*(M-60)+60。若一个人参考得分不及格，那么其最终得分仍然为M
-    - C为1.6：为团队主力，贡献最多代码，对团队完成的处理器了解最多。
-    - C为1.4：为团队二把手，负责设计各类测试项或协助团队主力完成各类工作。
-    - C为1.2：为团队其他活跃成员，不摆烂，不摸鱼，了解代码结构。
-    - C为0.4～-0.4：为团队摆烂成员，对处理器结构知识等知道很少，此比分按照具体情况变动
-
+# 系统能力大赛与人工智能组考核方案
+
+- 旧有考核方案见[此处](./exam.old.md)，亦可供参考
+- 考核时提问：指针对任务所实现的代码、运行过程、实现原理或某些技术、知识点的提问
+- 所有链接资料仅供参考
+- 新考核方案如下：
+
+## 人工智能考核内容
+
+以下内容可五选四完成：
+
+1. 使用C/C++实现一个简单的机器学习算法
+    - 具体：实现梯度下降算法，进行线性拟合等任务，并实时打印loss值
+    - 要求：算法实现代码需包含注释，并附上算法的基本原理和推导过程
+    - 展示方式：当场展示（可线上）+可复现源码及其文档
+    - 资料：
+        1. [梯度下降算法原理](https://dsfftp.readthedocs.io/zh-cn/latest/Linear-Regression/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95%E7%9A%84%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86.html)
+        2. [梯度下降算法实现demo](https://blog.csdn.net/AbBaCl/article/details/78817775)
+2. 实现一个基于深度学习的图像分类算法
+    - 具体：使用TensorFlow或PyTorch实现一个卷积神经网络，并训练模型进行图像分类
+    - 要求：算法实现代码需包含注释，并附上算法的基本原理和推导过程
+    - 展示方式：当场展示（可线上）+考核时提问+可复现源码及其文档
+    - 备注：采用开源数据集，展示时请放出训练loss曲线
+    - 资料：
+        1. [卷积神经网络原理](https://zh.d2l.ai/chapter_convolutional-neural-networks/index.html)
+        2. [MNIST数据集图像分类](https://pytorch.org/tutorials/beginner/basics/optimization_tutorial.html)
+3. 实现一个基于深度学习的序列预测与生成模型
+    - 具体：使用TensorFlow或PyTorch实现一个LSTM/GRU/GPT等模型选其一，并训练模型进行序列预测与生成
+    - 要求：算法实现代码需包含注释，并附上算法的基本原理和推导过程
+    - 展示方式：当场展示（可线上）+考核时提问+可复现源码及其文档
+    - 备注：此处序列可以是文本，也可以是时序数据。展示时请放出训练loss曲线
+    - 资料：
+        1. [LSTM/GRU原理](https://towardsdatascience.com/illustrated-guide-to-lstms-and-gru-s-a-step-by-step-explanation-44e9eb85bf21)
+        2. [Transformer for Time Series](https://medium.com/intel-tech/how-to-apply-transformers-to-time-series-models-spacetimeformer-e452f2825d2e)
+        3. [nanoGPT](https://github.com/karpathy/nanoGPT)
+4. 实现一个自定功能的AI智能体模型
+    - 具体：使用Python或其他编程语言实现一个基于规则或深度学习的智能体模型，并训练模型进行智能决策
+    - 要求：算法实现代码需包含注释，并附上算法的基本原理和推导过程
+    - 展示方式：当场展示（可线上）+考核时提问+可复现源码及其文档
+    - 备注：AI智能体的功能可自行DIY
+    - 资料：
+        1. [MoFA框架](https://github.com/moxin-org/mofa/)
+        2. [Awesome AI Agents](https://github.com/e2b-dev/awesome-ai-agents)
+5. 实现一个大模型训练推理优化的方法或工具
+    - 具体：使用Python与C++、CUDA等，实现一个大模型训练推理优化的方法或工具，并分析其优缺点
+    - 要求：算法实现代码需包含注释，并附上算法的基本原理和推导过程
+    - 展示方式：当场展示（可线上）+考核时提问+可复现源码及其文档
+    - 备注：可选大模型如LlaMA-2-7B等，展示时请放出优化前后推理或训练速度对比
+    - 资料：
+        1. [LlaMA模型](https://github.com/meta-llama/llama)
+        2. [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)
+
+
+## 操作系统考核内容
+
+1. 完成清华大学操作系统集训营基础阶段 - rustlings
+    - 具体：完成rustlings所有题目
+    - 要求：完成所有关卡，并提交代码。
+    - 展示方式：当场展示（可线上）+仓库代码
+    - 链接：
+        1. [rustlings](https://github.com/rust-lang/rustlings)
+        2. [Rust语言圣经](https://course.rs/about-book.html)
+        3. [Rust圣经（官方版）](https://doc.rust-lang.org/book/)
+2. 完成清华大学操作系统集训营进阶阶段 - 操作系统实验
+    - 具体：完成第3/4/5/6/8章节实验
+    - 要求：尽可能完成各个章节实验，并提前准备好操作系统方面的知识
+    - 展示方式：当场展示（可线上）+考核时提问+仓库代码
+    - 链接：
+        1. [操作系统实验指导书](https://learningos.cn/rCore-Tutorial-Guide-2024A/)
+        2. [rCore-Tutorial-v3](https://rcore-os.cn/rCore-Tutorial-Book-v3/)
+3. 基于操作系统实现FAT32文件系统驱动
+    - 具体：实现一个基于FAT32文件系统的驱动，并完成相关测试
+    - 要求：驱动代码需包含注释，并附上相关原理
+    - 展示方式：当场展示（可线上）+考核时提问+仓库代码
+    - 链接：
+        1. [axfs](https://github.com/Starry-OS/axfs)
+        2. [rust-fatfs](https://github.com/rafalh/rust-fatfs)
+4. 完成Virtio Driver移植
+    - 具体：移植Virtio Driver到你写的操作系统内核，并完成相关测试
+    - 要求：驱动代码需包含注释，并附上相关原理
+    - 展示方式：当场展示（可线上）+考核时提问+仓库代码
+    - 链接：
+        1. [virtio-drivers](https://github.com/rcore-os/virtio-drivers)
+        2. [driver_virtio](https://github.com/Starry-OS/driver_virtio)
+
+相关链接：
+   1. https://opencamp.cn/os2edu/camp/2024fall
+   2. https://wiki.osdev.org/Expanded_Main_Page
+   3. https://github.com/rustsbi/rustsbi-qemu
+
+## 编译器考核内容
+
+1. 完成InfiniTensor集训营的C++作业
+    - 具体：完成所有C++作业
+    - 要求：完成所有关卡，并提交代码。
+    - 展示方式：当场展示（可线上）+仓库代码
+    - 链接：
+        1. (learning-cxx)[https://github.com/LearningInfiniTensor/learning-cxx]
+2. 完成基于LLVM的编译器实现
+    - 具体：实现一个基于LLVM的编译器，并完成相关测试
+    - 要求：代码需包含注释，并附上相关原理
+    - 展示方式：当场展示（可线上）+考核时提问+仓库代码
+    - 链接：
+        1. [llvm-project](https://github.com/llvm/llvm-project)
+        2. [LLVM Tutorials](https://llvm.org/docs/GettingStartedTutorials.html)
+3. 完成编译器后端实现
+    - 具体：实现一个编译器后端，可编译出汇编
+    - 要求：代码需包含注释，并附上相关原理
+    - 展示方式：当场展示（可线上）+考核时提问+仓库代码
+4. 完成编译器中后端编译优化
+    - 具体：优化编译器后端，提升编译速度
+    - 要求：代码需包含注释，并附上相关原理
+    - 展示方式：当场展示（可线上）+考核时提问+仓库代码
+
+相关链接：
+   1. https://opencamp.cn/InfiniTensor/camp/2024summer
+   2. https://github.com/rswier/c4
+   3. https://github.com/TinyCC/tinycc
+
+## 龙芯杯考核方案
+
+1. 完成傲来集训营的C语言作业
+    - 具体：完成所有C语言作业
+    - 要求：完成所有关卡，并提交代码。
+    - 展示方式：当场展示（可线上）+仓库代码
+    - 链接：
+        1. https://gitee.com/LearningEulixOS/2024-exercises-stage-1
+        2. https://gitee.com/LearningEulixOS/2024-exercises-stage-2
+2. 完成HDLBits的大部分Verilog练习题
+    - 具体：完成大部分Verilog练习题
+    - 展示方式：当场展示（可线上）
+    - 链接：
+        1. https://hdlbits.01xz.net/wiki/Main_Page
+3. 完成南京大学数字逻辑与计算机组成实验
+    - 具体：完成实验一、二、三、六、七
+    - 展示方式：当场展示（可线上）+考核时提问+仓库代码
+    - 链接：
+        1. https://nju-projectn.github.io/dlco-lecture-note/index.html
+        2. https://github.com/NJU-ProjectN/nvboard
+4. 完成《CPU设计实战》书上的实验
+    - 展示方式：当场展示（可线上）+考核时提问+仓库代码
+    - 链接：
+        1. https://gitee.com/loongson-edu/cdp_ede_local
+        2. https://bookdown.org/ghostboy316/bookdown/chapter-cpu-chip-design-process.html
+5. 基于Chiplab设计CPU
+    - 具体：基于Chiplab设计CPU，并完成相关测试
+    - 要求：代码需包含注释，并附上相关原理
+    - 展示方式：当场展示（可线上）+考核时提问+仓库代码
+    - 链接：
+        1. https://gitee.com/loongson-edu/chiplab
+        2. https://gitee.com/xforcevesa/hc-core
+        3. https://www.chisel-lang.org/docs
